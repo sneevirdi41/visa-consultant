@@ -121,6 +121,38 @@ namespace visa_consulatant.Controllers
             });
         }
 
+        [HttpGet("test-jwt")]
+        public ActionResult TestJwt()
+        {
+            try
+            {
+                var jwtSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? "YourSuperSecretJWTKey2024!";
+                var testUser = new User
+                {
+                    Id = 1,
+                    Username = "test",
+                    Email = "test@example.com",
+                    Role = "Admin"
+                };
+                
+                var token = _jwtService.GenerateToken(testUser);
+                
+                return Ok(new { 
+                    jwtSecretKey = jwtSecretKey != null ? "set" : "null",
+                    token = token,
+                    timestamp = DateTime.UtcNow
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { 
+                    error = ex.Message,
+                    stackTrace = ex.StackTrace,
+                    timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
         [HttpPost("test-db")]
         public async Task<ActionResult> TestDatabase()
         {
