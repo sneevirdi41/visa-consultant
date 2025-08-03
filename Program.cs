@@ -13,25 +13,62 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 // Configure Entity Framework with PostgreSQL
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
-    ?? Environment.GetEnvironmentVariable("DATABASE_URL");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// Try to get DATABASE_URL from environment variables
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+var pgHost = Environment.GetEnvironmentVariable("PGHOST");
+var pgPort = Environment.GetEnvironmentVariable("PGPORT");
+var pgDatabase = Environment.GetEnvironmentVariable("PGDATABASE");
+var pgUser = Environment.GetEnvironmentVariable("PGUSER");
+var pgPassword = Environment.GetEnvironmentVariable("PGPASSWORD");
+
+Console.WriteLine($"DATABASE_URL: {(string.IsNullOrEmpty(databaseUrl) ? "null" : "set")}");
+Console.WriteLine($"PGHOST: {pgHost}");
+Console.WriteLine($"PGPORT: {pgPort}");
+Console.WriteLine($"PGDATABASE: {pgDatabase}");
+Console.WriteLine($"PGUSER: {pgUser}");
+Console.WriteLine($"PGPASSWORD: {(string.IsNullOrEmpty(pgPassword) ? "null" : "set")}");
+
+// Check if DATABASE_URL contains Railway variable reference format
+if (!string.IsNullOrEmpty(databaseUrl) && databaseUrl.StartsWith("${{"))
+{
+    Console.WriteLine("WARNING: DATABASE_URL contains Railway variable reference format. This should be resolved by Railway.");
+    Console.WriteLine($"Raw DATABASE_URL: {databaseUrl}");
+    // Railway should resolve this automatically, but if not, we'll fall back to individual variables
+}
+
+// Build connection string from individual environment variables if DATABASE_URL is not available or is a reference
+if (string.IsNullOrEmpty(connectionString) && (string.IsNullOrEmpty(databaseUrl) || databaseUrl.StartsWith("${{")))
+{
+    if (!string.IsNullOrEmpty(pgHost) && !string.IsNullOrEmpty(pgDatabase) && !string.IsNullOrEmpty(pgUser) && !string.IsNullOrEmpty(pgPassword))
+    {
+        var port = string.IsNullOrEmpty(pgPort) ? "5432" : pgPort;
+        connectionString = $"Host={pgHost};Port={port};Database={pgDatabase};Username={pgUser};Password={pgPassword};SSL Mode=Prefer;Trust Server Certificate=true;";
+        Console.WriteLine("Built connection string from individual environment variables");
+    }
+    else
+    {
+        Console.WriteLine("WARNING: No database connection string found!");
+        // Use SQLite for local development
+        connectionString = "Data Source=visa_consultant.db";
+        Console.WriteLine("Using SQLite for local development");
+    }
+}
+else if (!string.IsNullOrEmpty(databaseUrl) && !databaseUrl.StartsWith("${{"))
+{
+    connectionString = databaseUrl;
+    Console.WriteLine("Using DATABASE_URL from environment");
+}
 
 // Log connection string for debugging (masked)
 var maskedConnectionString = connectionString != null 
     ? connectionString.Substring(0, Math.Min(20, connectionString.Length)) + "..." 
     : "null";
-Console.WriteLine($"Connection string: {maskedConnectionString}");
-
-if (string.IsNullOrEmpty(connectionString))
-{
-    Console.WriteLine("WARNING: No database connection string found!");
-    // Use SQLite for local development
-    connectionString = "Data Source=visa_consultant.db";
-    Console.WriteLine("Using SQLite for local development");
-}
+Console.WriteLine($"Final connection string: {maskedConnectionString}");
 
 // Use SQLite for local development, PostgreSQL for production
-if (builder.Environment.IsDevelopment() && connectionString.Contains("localhost"))
+if (builder.Environment.IsDevelopment() && (connectionString.Contains("localhost") || connectionString.Contains("visa_consultant.db")))
 {
     Console.WriteLine("Configuring SQLite for local development...");
     builder.Services.AddDbContext<ApplicationDbContext>(options =>

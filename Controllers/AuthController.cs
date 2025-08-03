@@ -47,15 +47,26 @@ namespace visa_consulatant.Controllers
         {
             try
             {
-                var rawConnectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
-                var maskedConnectionString = rawConnectionString != null 
-                    ? rawConnectionString.Substring(0, Math.Min(50, rawConnectionString.Length)) + "..." 
+                var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+                var pgHost = Environment.GetEnvironmentVariable("PGHOST");
+                var pgPort = Environment.GetEnvironmentVariable("PGPORT");
+                var pgDatabase = Environment.GetEnvironmentVariable("PGDATABASE");
+                var pgUser = Environment.GetEnvironmentVariable("PGUSER");
+                var pgPassword = Environment.GetEnvironmentVariable("PGPASSWORD");
+                
+                var maskedDatabaseUrl = databaseUrl != null 
+                    ? databaseUrl.Substring(0, Math.Min(50, databaseUrl.Length)) + "..." 
                     : "null";
                 
                 return Ok(new { 
-                    rawConnectionString = maskedConnectionString,
-                    connectionStringLength = rawConnectionString?.Length ?? 0,
-                    isNull = rawConnectionString == null,
+                    databaseUrl = maskedDatabaseUrl,
+                    databaseUrlLength = databaseUrl?.Length ?? 0,
+                    pgHost = pgHost,
+                    pgPort = pgPort,
+                    pgDatabase = pgDatabase,
+                    pgUser = pgUser,
+                    pgPassword = pgPassword != null ? "***" : "null",
+                    environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"),
                     timestamp = DateTime.UtcNow
                 });
             }
