@@ -54,8 +54,17 @@ namespace visa_consulatant.Controllers
                 var pgUser = Environment.GetEnvironmentVariable("PGUSER");
                 var pgPassword = Environment.GetEnvironmentVariable("PGPASSWORD");
                 
+                // Check alternative environment variables
+                var railwayDbUrl = Environment.GetEnvironmentVariable("RAILWAY_DATABASE_URL");
+                var dbConnectionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING");
+                var postgresUrl = Environment.GetEnvironmentVariable("POSTGRES_URL");
+                
                 var maskedDatabaseUrl = databaseUrl != null 
                     ? databaseUrl.Substring(0, Math.Min(50, databaseUrl.Length)) + "..." 
+                    : "null";
+                
+                var maskedRailwayDbUrl = railwayDbUrl != null 
+                    ? railwayDbUrl.Substring(0, Math.Min(50, railwayDbUrl.Length)) + "..." 
                     : "null";
                 
                 return Ok(new { 
@@ -66,6 +75,9 @@ namespace visa_consulatant.Controllers
                     pgDatabase = pgDatabase,
                     pgUser = pgUser,
                     pgPassword = pgPassword != null ? "***" : "null",
+                    railwayDbUrl = maskedRailwayDbUrl,
+                    dbConnectionString = dbConnectionString != null ? "***" : "null",
+                    postgresUrl = postgresUrl != null ? "***" : "null",
                     environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"),
                     timestamp = DateTime.UtcNow
                 });

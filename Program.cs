@@ -61,6 +61,21 @@ else if (!string.IsNullOrEmpty(databaseUrl) && !databaseUrl.StartsWith("${{"))
     Console.WriteLine("Using DATABASE_URL from environment");
 }
 
+// Additional fallback: Try to get the actual DATABASE_URL from Railway's internal resolution
+if (string.IsNullOrEmpty(connectionString) || connectionString.Contains("visa_consultant.db"))
+{
+    // Try alternative environment variable names that Railway might use
+    var alternativeDbUrl = Environment.GetEnvironmentVariable("RAILWAY_DATABASE_URL") 
+        ?? Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING")
+        ?? Environment.GetEnvironmentVariable("POSTGRES_URL");
+    
+    if (!string.IsNullOrEmpty(alternativeDbUrl))
+    {
+        connectionString = alternativeDbUrl;
+        Console.WriteLine($"Using alternative database URL: {alternativeDbUrl.Substring(0, Math.Min(30, alternativeDbUrl.Length))}...");
+    }
+}
+
 // Log connection string for debugging (masked)
 var maskedConnectionString = connectionString != null 
     ? connectionString.Substring(0, Math.Min(20, connectionString.Length)) + "..." 
