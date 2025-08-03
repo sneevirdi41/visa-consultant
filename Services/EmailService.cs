@@ -27,7 +27,7 @@ namespace visa_consulatant.Services
         {
             try
             {
-                var adminEmail = _configuration["EmailSettings:AdminEmail"];
+                var adminEmail = Environment.GetEnvironmentVariable("ADMIN_EMAIL");
                 if (string.IsNullOrEmpty(adminEmail))
                 {
                     _logger.LogWarning("Admin email not configured. Skipping email notification.");
@@ -50,14 +50,13 @@ namespace visa_consulatant.Services
         {
             try
             {
-                var emailSettings = _configuration.GetSection("EmailSettings");
-                var smtpServer = emailSettings["SmtpServer"];
-                var smtpPortStr = emailSettings["SmtpPort"];
+                var smtpServer = Environment.GetEnvironmentVariable("SMTP_SERVER");
+                var smtpPortStr = Environment.GetEnvironmentVariable("SMTP_PORT");
                 var smtpPort = int.Parse(smtpPortStr ?? "587");
-                var username = emailSettings["Username"];
-                var password = emailSettings["Password"];
-                var fromEmail = emailSettings["FromEmail"];
-                var fromName = emailSettings["FromName"];
+                var username = Environment.GetEnvironmentVariable("SMTP_USERNAME");
+                var password = Environment.GetEnvironmentVariable("SMTP_PASSWORD");
+                var fromEmail = Environment.GetEnvironmentVariable("FROM_EMAIL");
+                var fromName = Environment.GetEnvironmentVariable("FROM_NAME") ?? "Visa Consultant";
 
                 if (string.IsNullOrEmpty(smtpServer) || string.IsNullOrEmpty(username) || 
                     string.IsNullOrEmpty(password) || string.IsNullOrEmpty(fromEmail))
