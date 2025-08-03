@@ -23,23 +23,43 @@ namespace visa_consulatant.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<LoginResponse>> Login(LoginRequest request)
         {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Username == request.Username && u.IsActive);
-
-            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            try
             {
-                return Unauthorized(new { message = "Invalid username or password" });
+                // Check if user exists
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Username == request.Username && u.IsActive);
+
+                if (user == null)
+                {
+                    return Unauthorized(new { message = "Invalid username or password" });
+                }
+
+                // Verify password
+                if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+                {
+                    return Unauthorized(new { message = "Invalid username or password" });
+                }
+
+                // Generate token
+                var token = _jwtService.GenerateToken(user);
+
+                return Ok(new LoginResponse
+                {
+                    Token = token,
+                    Username = user.Username,
+                    Role = user.Role,
+                    ExpiresAt = DateTime.UtcNow.AddMinutes(60)
+                });
             }
-
-            var token = _jwtService.GenerateToken(user);
-
-            return Ok(new LoginResponse
+            catch (Exception ex)
             {
-                Token = token,
-                Username = user.Username,
-                Role = user.Role,
-                ExpiresAt = DateTime.UtcNow.AddMinutes(60)
-            });
+                return StatusCode(500, new { 
+                    message = "Login failed",
+                    error = ex.Message,
+                    stackTrace = ex.StackTrace,
+                    timestamp = DateTime.UtcNow
+                });
+            }
         }
 
         [HttpPost("test-connection")]
