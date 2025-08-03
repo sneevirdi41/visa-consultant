@@ -104,6 +104,110 @@ namespace visa_consulatant.Controllers
             }
         }
 
+        [HttpPost("test-sql")]
+        public async Task<ActionResult> TestSql()
+        {
+            try
+            {
+                var results = new List<object>();
+                
+                // Test 1: Check if we can connect
+                var canConnect = await _context.Database.CanConnectAsync();
+                results.Add(new { test = "Database Connection", result = canConnect ? "SUCCESS" : "FAILED" });
+                
+                if (!canConnect)
+                {
+                    return StatusCode(500, new { 
+                        error = "Cannot connect to database",
+                        tests = results,
+                        timestamp = DateTime.UtcNow
+                    });
+                }
+                
+                // Test 2: Get database name
+                var databaseName = _context.Database.GetDbConnection().Database;
+                results.Add(new { test = "Database Name", result = databaseName });
+                
+                // Test 3: Check if Users table exists
+                var usersTableExists = await _context.Database.ExecuteSqlRawAsync(
+                    "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'Users'") > 0;
+                results.Add(new { test = "Users Table Exists", result = usersTableExists ? "YES" : "NO" });
+                
+                // Test 4: Count users
+                var userCount = await _context.Users.CountAsync();
+                results.Add(new { test = "User Count", result = userCount });
+                
+                // Test 5: Check if HomePageContents table exists
+                var homePageTableExists = await _context.Database.ExecuteSqlRawAsync(
+                    "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'HomePageContents'") > 0;
+                results.Add(new { test = "HomePageContents Table Exists", result = homePageTableExists ? "YES" : "NO" });
+                
+                // Test 6: Check if VisaServices table exists
+                var visaServicesTableExists = await _context.Database.ExecuteSqlRawAsync(
+                    "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'VisaServices'") > 0;
+                results.Add(new { test = "VisaServices Table Exists", result = visaServicesTableExists ? "YES" : "NO" });
+                
+                // Test 7: List all tables
+                var tables = await _context.Database.SqlQueryRaw<string>(
+                    "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name"
+                ).ToListAsync();
+                results.Add(new { test = "All Tables", result = string.Join(", ", tables) });
+                
+                // Test 8: Check database version
+                var version = await _context.Database.SqlQueryRaw<string>("SELECT version()").FirstOrDefaultAsync();
+                results.Add(new { test = "Database Version", result = version });
+                
+                return Ok(new { 
+                    tests = results,
+                    timestamp = DateTime.UtcNow
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { 
+                    error = ex.Message,
+                    stackTrace = ex.StackTrace,
+                    timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
+        [HttpPost("run-sql")]
+        public async Task<ActionResult> RunSql([FromBody] SqlRequest request)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(request.Sql))
+                {
+                    return BadRequest(new { error = "SQL command is required" });
+                }
+                
+                // Only allow SELECT queries for security
+                var sql = request.Sql.Trim();
+                if (!sql.StartsWith("SELECT", StringComparison.OrdinalIgnoreCase))
+                {
+                    return BadRequest(new { error = "Only SELECT queries are allowed for security" });
+                }
+                
+                var result = await _context.Database.SqlQueryRaw<object>(sql).ToListAsync();
+                
+                return Ok(new { 
+                    sql = sql,
+                    result = result,
+                    count = result.Count,
+                    timestamp = DateTime.UtcNow
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { 
+                    error = ex.Message,
+                    sql = request.Sql,
+                    timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
         [HttpPost("register")]
         public async Task<ActionResult> Register(RegisterRequest request)
         {
