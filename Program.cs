@@ -46,13 +46,8 @@ else
         Console.WriteLine($"Original connection string: {connectionString}");
         try
         {
-            // Handle URL encoding in password
-            var uriString = connectionString.Replace("postgresql://", "http://").Replace("postgres://", "http://");
-            Console.WriteLine($"URI string: {uriString}");
-            
-            var uri = new Uri(uriString);
-            Console.WriteLine($"Parsed URI - Host: {uri.Host}, Port: {uri.Port}, Path: {uri.AbsolutePath}");
-            
+            // Parse the connection string manually
+            var uri = new Uri(connectionString);
             var userInfo = uri.UserInfo.Split(':');
             var username = Uri.UnescapeDataString(userInfo[0]);
             var password = Uri.UnescapeDataString(userInfo[1]);
@@ -62,7 +57,8 @@ else
             
             Console.WriteLine($"Extracted - Username: {username}, Host: {host}, Port: {port}, Database: {database}");
             
-            connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password};";
+            // Build the connection string in the correct format for Npgsql
+            connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Prefer;Trust Server Certificate=true;";
             Console.WriteLine($"Converted connection string: {connectionString.Substring(0, Math.Min(30, connectionString.Length))}...");
         }
         catch (Exception ex)
