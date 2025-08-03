@@ -55,6 +55,7 @@ namespace visa_consulatant.Controllers
                 return Ok(new { 
                     rawConnectionString = maskedConnectionString,
                     connectionStringLength = rawConnectionString?.Length ?? 0,
+                    isNull = rawConnectionString == null,
                     timestamp = DateTime.UtcNow
                 });
             }
