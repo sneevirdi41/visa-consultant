@@ -13,11 +13,27 @@ builder.Services.AddControllers();
 // Configure Entity Framework with PostgreSQL
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
     ?? Environment.GetEnvironmentVariable("DATABASE_URL");
+
+// Log connection string for debugging (masked)
+var maskedConnectionString = connectionString != null 
+    ? connectionString.Substring(0, Math.Min(20, connectionString.Length)) + "..." 
+    : "null";
+Console.WriteLine($"Connection string: {maskedConnectionString}");
+
+if (string.IsNullOrEmpty(connectionString))
+{
+    Console.WriteLine("WARNING: No database connection string found!");
+    // Use a fallback connection string for development
+    connectionString = "Host=localhost;Database=visa_consultant;Username=postgres;Password=password";
+}
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 // Configure JWT Authentication
 var jwtSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? "YourSuperSecretJWTKey2024!";
+Console.WriteLine($"JWT Secret Key configured: {!string.IsNullOrEmpty(jwtSecretKey)}");
+
 var key = Encoding.ASCII.GetBytes(jwtSecretKey);
 
 builder.Services.AddAuthentication(options =>
@@ -79,6 +95,9 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Add a simple health check endpoint
+app.MapGet("/health", () => new { status = "healthy", timestamp = DateTime.UtcNow });
+
 // Ensure database is migrated with retry logic
 using (var scope = app.Services.CreateScope())
 {
@@ -90,17 +109,33 @@ using (var scope = app.Services.CreateScope())
         logger.LogInformation("Starting database migration...");
         logger.LogInformation($"Connection string: {connectionString?.Substring(0, Math.Min(50, connectionString.Length))}...");
         
-        // Ensure database exists
-        context.Database.EnsureCreated();
-        logger.LogInformation("Database created/verified successfully.");
+        // Test database connection first
+        logger.LogInformation("Testing database connection...");
+        var canConnect = await context.Database.CanConnectAsync();
+        logger.LogInformation($"Database connection test: {(canConnect ? "SUCCESS" : "FAILED")}");
         
-        // Apply migrations
-        context.Database.Migrate();
-        logger.LogInformation("Database migrated successfully.");
+        if (!canConnect)
+        {
+            logger.LogError("Cannot connect to database. Application will start but database operations will fail.");
+            // Don't throw - let the app start even if database is not available
+        }
+        else
+        {
+            // Ensure database exists
+            logger.LogInformation("Ensuring database exists...");
+            context.Database.EnsureCreated();
+            logger.LogInformation("Database created/verified successfully.");
+            
+            // Apply migrations
+            logger.LogInformation("Applying database migrations...");
+            context.Database.Migrate();
+            logger.LogInformation("Database migrated successfully.");
+        }
     }
     catch (Exception ex)
     {
         logger.LogError(ex, "Failed to migrate database. Application will continue but database operations may fail.");
+        Console.WriteLine($"Database migration error: {ex.Message}");
         // Don't throw - let the app start even if migration fails
     }
 }
