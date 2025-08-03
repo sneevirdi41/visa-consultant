@@ -150,34 +150,60 @@ namespace visa_consulatant.Controllers
                 var databaseName = _context.Database.GetDbConnection().Database;
                 results.Add(new { test = "Database Name", result = databaseName });
                 
-                // Test 3: Check if Users table exists
-                var usersTableExists = await _context.Database.ExecuteSqlRawAsync(
-                    "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'Users'") > 0;
+                // Test 3: Check if Users table exists using simpler query
+                var usersTableCount = await _context.Database.ExecuteSqlRawAsync(
+                    "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'Users'");
+                var usersTableExists = usersTableCount > 0;
                 results.Add(new { test = "Users Table Exists", result = usersTableExists ? "YES" : "NO" });
                 
-                // Test 4: Count users
+                // Test 4: Count users using Entity Framework
                 var userCount = await _context.Users.CountAsync();
                 results.Add(new { test = "User Count", result = userCount });
                 
                 // Test 5: Check if HomePageContents table exists
-                var homePageTableExists = await _context.Database.ExecuteSqlRawAsync(
-                    "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'HomePageContents'") > 0;
+                var homePageTableCount = await _context.Database.ExecuteSqlRawAsync(
+                    "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'HomePageContents'");
+                var homePageTableExists = homePageTableCount > 0;
                 results.Add(new { test = "HomePageContents Table Exists", result = homePageTableExists ? "YES" : "NO" });
                 
                 // Test 6: Check if VisaServices table exists
-                var visaServicesTableExists = await _context.Database.ExecuteSqlRawAsync(
-                    "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'VisaServices'") > 0;
+                var visaServicesTableCount = await _context.Database.ExecuteSqlRawAsync(
+                    "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'VisaServices'");
+                var visaServicesTableExists = visaServicesTableCount > 0;
                 results.Add(new { test = "VisaServices Table Exists", result = visaServicesTableExists ? "YES" : "NO" });
                 
-                // Test 7: List all tables
-                var tables = await _context.Database.SqlQueryRaw<string>(
-                    "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name"
-                ).ToListAsync();
-                results.Add(new { test = "All Tables", result = string.Join(", ", tables) });
+                // Test 7: List all tables using simpler approach
+                try
+                {
+                    var tableNames = new List<string>();
+                    using var command = _context.Database.GetDbConnection().CreateCommand();
+                    command.CommandText = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name";
+                    _context.Database.OpenConnection();
+                    using var result = command.ExecuteReader();
+                    while (result.Read())
+                    {
+                        tableNames.Add(result.GetString(0));
+                    }
+                    results.Add(new { test = "All Tables", result = string.Join(", ", tableNames) });
+                }
+                catch (Exception ex)
+                {
+                    results.Add(new { test = "All Tables", result = $"Error: {ex.Message}" });
+                }
                 
-                // Test 8: Check database version
-                var version = await _context.Database.SqlQueryRaw<string>("SELECT version()").FirstOrDefaultAsync();
-                results.Add(new { test = "Database Version", result = version });
+                // Test 8: Check database version using simpler approach
+                try
+                {
+                    using var command = _context.Database.GetDbConnection().CreateCommand();
+                    command.CommandText = "SELECT version()";
+                    _context.Database.OpenConnection();
+                    var version = command.ExecuteScalar()?.ToString();
+                    results.Add(new { test = "Database Version", result = version ?? "Unknown" });
+                }
+                catch (Exception ex)
+                {
+                    results.Add(new { test = "Database Version", result = $"Error: {ex.Message}" });
+                }
                 
                 return Ok(new { 
                     tests = results,
