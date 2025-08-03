@@ -31,17 +31,24 @@ if (string.IsNullOrEmpty(connectionString))
 else if (connectionString.StartsWith("postgresql://") || connectionString.StartsWith("postgres://"))
 {
     Console.WriteLine("Converting Railway DATABASE_URL format...");
+    Console.WriteLine($"Original connection string: {connectionString}");
     try
     {
-        // Remove the protocol prefix
+        // Handle URL encoding in password
         var uriString = connectionString.Replace("postgresql://", "http://").Replace("postgres://", "http://");
-        var uri = new Uri(uriString);
+        Console.WriteLine($"URI string: {uriString}");
         
-        var username = uri.UserInfo.Split(':')[0];
-        var password = uri.UserInfo.Split(':')[1];
+        var uri = new Uri(uriString);
+        Console.WriteLine($"Parsed URI - Host: {uri.Host}, Port: {uri.Port}, Path: {uri.AbsolutePath}");
+        
+        var userInfo = uri.UserInfo.Split(':');
+        var username = Uri.UnescapeDataString(userInfo[0]);
+        var password = Uri.UnescapeDataString(userInfo[1]);
         var host = uri.Host;
         var port = uri.Port;
         var database = uri.AbsolutePath.TrimStart('/');
+        
+        Console.WriteLine($"Extracted - Username: {username}, Host: {host}, Port: {port}, Database: {database}");
         
         connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password};";
         Console.WriteLine($"Converted connection string: {connectionString.Substring(0, Math.Min(30, connectionString.Length))}...");
@@ -49,7 +56,7 @@ else if (connectionString.StartsWith("postgresql://") || connectionString.Starts
     catch (Exception ex)
     {
         Console.WriteLine($"Error parsing DATABASE_URL: {ex.Message}");
-        Console.WriteLine($"Original connection string: {connectionString}");
+        Console.WriteLine($"Stack trace: {ex.StackTrace}");
         // Fall back to using the original connection string
     }
 }
