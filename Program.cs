@@ -248,26 +248,36 @@ using (var scope = app.Services.CreateScope())
         if (!canConnect)
         {
             logger.LogError("Cannot connect to database. Application will start but database operations will fail.");
+            logger.LogError("This might be due to database not being ready yet. Will retry on first request.");
             // Don't throw - let the app start even if database is not available
         }
         else
         {
-            // Ensure database exists
-            logger.LogInformation("Ensuring database exists...");
-            context.Database.EnsureCreated();
-            logger.LogInformation("Database created/verified successfully.");
-            
-            // Apply migrations
-            logger.LogInformation("Applying database migrations...");
-            context.Database.Migrate();
-            logger.LogInformation("Database migrated successfully.");
+            try
+            {
+                // Ensure database exists
+                logger.LogInformation("Ensuring database exists...");
+                context.Database.EnsureCreated();
+                logger.LogInformation("Database created/verified successfully.");
+                
+                // Apply migrations
+                logger.LogInformation("Applying database migrations...");
+                context.Database.Migrate();
+                logger.LogInformation("Database migrated successfully.");
+            }
+            catch (Exception migrationEx)
+            {
+                logger.LogError(migrationEx, "Failed to migrate database. Application will continue but database operations may fail.");
+                Console.WriteLine($"Database migration error: {migrationEx.Message}");
+                // Don't throw - let the app start even if migration fails
+            }
         }
     }
     catch (Exception ex)
     {
-        logger.LogError(ex, "Failed to migrate database. Application will continue but database operations may fail.");
-        Console.WriteLine($"Database migration error: {ex.Message}");
-        // Don't throw - let the app start even if migration fails
+        logger.LogError(ex, "Failed to connect to database during startup. Application will continue but database operations may fail.");
+        Console.WriteLine($"Database connection error during startup: {ex.Message}");
+        // Don't throw - let the app start even if connection fails
     }
 }
 
