@@ -91,6 +91,16 @@ namespace visa_consulatant.Controllers
             }
         }
 
+        [HttpGet("ping")]
+        public ActionResult Ping()
+        {
+            return Ok(new { 
+                message = "Pong!",
+                timestamp = DateTime.UtcNow,
+                environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
+            });
+        }
+
         [HttpPost("test-db")]
         public async Task<ActionResult> TestDatabase()
         {
