@@ -88,9 +88,6 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Visa Consultant API", Version = "v1" });
     
-    // Configure Swagger to handle file uploads
-    c.OperationFilter<FileUploadOperationFilter>();
-    
     // Add JWT authentication to Swagger
     c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {

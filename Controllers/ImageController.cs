@@ -19,6 +19,7 @@ namespace visa_consulatant.Controllers
 
         [HttpPost("upload")]
         [Authorize(Roles = "Admin")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<ImageUpload>> UploadImage(IFormFile file, [FromForm] string imageType, [FromForm] string? title, [FromForm] string? description)
         {
             if (file == null || file.Length == 0)

@@ -45,6 +45,7 @@ namespace visa_consulatant.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Admin")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult> UpdateHomePageContent([FromForm] string title, [FromForm] string description, 
             [FromForm] string? welcomeMessage, [FromForm] string? servicesOverview, 
             [FromForm] IFormFile? heroImage, [FromForm] IFormFile? bannerImage)
