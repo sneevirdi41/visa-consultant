@@ -98,6 +98,7 @@ namespace visa_consulatant.Controllers
                     railwayDbUrl = maskedRailwayDbUrl,
                     dbConnectionString = dbConnectionString != null ? "***" : "null",
                     postgresUrl = postgresUrl != null ? "***" : "null",
+                    jwtSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") != null ? "set" : "null",
                     environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"),
                     timestamp = DateTime.UtcNow
                 });
