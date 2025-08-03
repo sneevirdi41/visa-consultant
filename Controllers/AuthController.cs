@@ -122,6 +122,33 @@ namespace visa_consulatant.Controllers
             });
         }
 
+        [HttpGet("debug-jwt")]
+        public ActionResult DebugJwt()
+        {
+            try
+            {
+                var jwtSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? "YourSuperSecretJWTKey2024!";
+                var keyLength = jwtSecretKey.Length;
+                var keyBits = keyLength * 8;
+                
+                return Ok(new { 
+                    jwtSecretKey = jwtSecretKey != null ? "set" : "null",
+                    keyLength = keyLength,
+                    keyBits = keyBits,
+                    keyPreview = jwtSecretKey.Length > 10 ? jwtSecretKey.Substring(0, 10) + "..." : jwtSecretKey,
+                    timestamp = DateTime.UtcNow
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { 
+                    error = ex.Message,
+                    stackTrace = ex.StackTrace,
+                    timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
         [HttpGet("test-jwt")]
         public ActionResult TestJwt()
         {

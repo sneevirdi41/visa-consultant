@@ -18,7 +18,10 @@ namespace visa_consulatant.Services
         public string GenerateToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:SecretKey"]!);
+            
+            // Get JWT secret key from environment variable first, then fall back to configuration
+            var jwtSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? _configuration["JwtSettings:SecretKey"];
+            var key = Encoding.ASCII.GetBytes(jwtSecretKey!);
             
             var tokenDescriptor = new SecurityTokenDescriptor
             {
