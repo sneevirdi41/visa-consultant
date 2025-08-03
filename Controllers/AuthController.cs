@@ -42,6 +42,31 @@ namespace visa_consulatant.Controllers
             });
         }
 
+        [HttpPost("test-connection")]
+        public ActionResult TestConnection()
+        {
+            try
+            {
+                var rawConnectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
+                var maskedConnectionString = rawConnectionString != null 
+                    ? rawConnectionString.Substring(0, Math.Min(50, rawConnectionString.Length)) + "..." 
+                    : "null";
+                
+                return Ok(new { 
+                    rawConnectionString = maskedConnectionString,
+                    connectionStringLength = rawConnectionString?.Length ?? 0,
+                    timestamp = DateTime.UtcNow
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { 
+                    error = ex.Message,
+                    timestamp = DateTime.UtcNow
+                });
+            }
+        }
+
         [HttpPost("test-db")]
         public async Task<ActionResult> TestDatabase()
         {

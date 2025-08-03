@@ -25,44 +25,57 @@ Console.WriteLine($"Connection string: {maskedConnectionString}");
 if (string.IsNullOrEmpty(connectionString))
 {
     Console.WriteLine("WARNING: No database connection string found!");
-    // Use a fallback connection string for development
-    connectionString = "Host=localhost;Database=visa_consultant;Username=postgres;Password=password";
-}
-else if (connectionString.StartsWith("postgresql://") || connectionString.StartsWith("postgres://"))
-{
-    Console.WriteLine("Converting Railway DATABASE_URL format...");
-    Console.WriteLine($"Original connection string: {connectionString}");
-    try
-    {
-        // Handle URL encoding in password
-        var uriString = connectionString.Replace("postgresql://", "http://").Replace("postgres://", "http://");
-        Console.WriteLine($"URI string: {uriString}");
-        
-        var uri = new Uri(uriString);
-        Console.WriteLine($"Parsed URI - Host: {uri.Host}, Port: {uri.Port}, Path: {uri.AbsolutePath}");
-        
-        var userInfo = uri.UserInfo.Split(':');
-        var username = Uri.UnescapeDataString(userInfo[0]);
-        var password = Uri.UnescapeDataString(userInfo[1]);
-        var host = uri.Host;
-        var port = uri.Port;
-        var database = uri.AbsolutePath.TrimStart('/');
-        
-        Console.WriteLine($"Extracted - Username: {username}, Host: {host}, Port: {port}, Database: {database}");
-        
-        connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password};";
-        Console.WriteLine($"Converted connection string: {connectionString.Substring(0, Math.Min(30, connectionString.Length))}...");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error parsing DATABASE_URL: {ex.Message}");
-        Console.WriteLine($"Stack trace: {ex.StackTrace}");
-        // Fall back to using the original connection string
-    }
+    // Use SQLite for local development
+    connectionString = "Data Source=visa_consultant.db";
+    Console.WriteLine("Using SQLite for local development");
 }
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+// Use SQLite for local development, PostgreSQL for production
+if (builder.Environment.IsDevelopment() && connectionString.Contains("localhost"))
+{
+    Console.WriteLine("Configuring SQLite for local development...");
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlite(connectionString));
+}
+else
+{
+    Console.WriteLine("Configuring PostgreSQL for production...");
+    if (connectionString.StartsWith("postgresql://") || connectionString.StartsWith("postgres://"))
+    {
+        Console.WriteLine("Converting Railway DATABASE_URL format...");
+        Console.WriteLine($"Original connection string: {connectionString}");
+        try
+        {
+            // Handle URL encoding in password
+            var uriString = connectionString.Replace("postgresql://", "http://").Replace("postgres://", "http://");
+            Console.WriteLine($"URI string: {uriString}");
+            
+            var uri = new Uri(uriString);
+            Console.WriteLine($"Parsed URI - Host: {uri.Host}, Port: {uri.Port}, Path: {uri.AbsolutePath}");
+            
+            var userInfo = uri.UserInfo.Split(':');
+            var username = Uri.UnescapeDataString(userInfo[0]);
+            var password = Uri.UnescapeDataString(userInfo[1]);
+            var host = uri.Host;
+            var port = uri.Port;
+            var database = uri.AbsolutePath.TrimStart('/');
+            
+            Console.WriteLine($"Extracted - Username: {username}, Host: {host}, Port: {port}, Database: {database}");
+            
+            connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password};";
+            Console.WriteLine($"Converted connection string: {connectionString.Substring(0, Math.Min(30, connectionString.Length))}...");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error parsing DATABASE_URL: {ex.Message}");
+            Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            // Fall back to using the original connection string
+        }
+    }
+    
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseNpgsql(connectionString));
+}
 
 // Configure JWT Authentication
 var jwtSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? "YourSuperSecretJWTKey2024!";
