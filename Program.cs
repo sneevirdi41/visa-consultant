@@ -66,11 +66,9 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// Enable Swagger in all environments for Railway health checks
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
@@ -91,13 +89,21 @@ using (var scope = app.Services.CreateScope())
     
     try
     {
-        logger.LogInformation("Ensuring database is migrated...");
+        logger.LogInformation("Starting database migration...");
+        logger.LogInformation($"Connection string: {connectionString?.Substring(0, Math.Min(50, connectionString.Length))}...");
+        
+        // Ensure database exists
+        context.Database.EnsureCreated();
+        logger.LogInformation("Database created/verified successfully.");
+        
+        // Apply migrations
         context.Database.Migrate();
         logger.LogInformation("Database migrated successfully.");
     }
     catch (Exception ex)
     {
         logger.LogError(ex, "Failed to migrate database. Application will continue but database operations may fail.");
+        // Don't throw - let the app start even if migration fails
     }
 }
 
