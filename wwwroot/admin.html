@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guru Kirpa Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .navbar { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%) !important; }
+        .card { border: none; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .btn-primary { background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%); border: none; }
+        .hidden { display: none; }
+        .image-preview { max-width: 200px; max-height: 150px; border-radius: 10px; border: 2px dashed #ccc; padding: 10px; margin: 10px 0; }
+        .carousel-item img { width: 100%; height: 300px; object-fit: cover; }
+        .carousel-caption { background: rgba(0,0,0,0.7); border-radius: 10px; padding: 15px; }
+        .offer-card { border: 2px solid #3b82f6; border-radius: 15px; padding: 20px; margin: 15px 0; background: white; }
+        
+        .carousel-management-item {
+            transition: background-color 0.2s;
+        }
+
+        .carousel-management-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .carousel-checkbox:checked + .carousel-management-item {
+            background-color: #e3f2fd;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Section -->
+    <div id="loginSection" class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body p-5">
+                        <h2 class="text-center mb-4"><i class="fas fa-user-shield"></i> Admin Login</h2>
+                        <form id="loginForm">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Login</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="hidden">
+        <nav class="navbar navbar-expand-lg fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand text-white" href="#"><i class="fas fa-cog me-2"></i>Admin Dashboard</a>
+                <div class="navbar-nav ms-auto">
+                    <span class="navbar-text text-white me-3" id="adminInfo"></span>
+                    <button class="btn btn-outline-light" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid mt-5 pt-5">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Admin Menu</h5>
+                            <div class="list-group list-group-flush">
+                                <a href="#" class="list-group-item list-group-item-action" onclick="showSection('homepage')">
+                                    <i class="fas fa-home me-2"></i>Homepage Content
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action" onclick="showSection('carousel')">
+                                    <i class="fas fa-images me-2"></i>Carousel Images
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action" onclick="showSection('logo')">
+                                    <i class="fas fa-image me-2"></i>Logo Management
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action" onclick="showSection('offers')">
+                                    <i class="fas fa-gift me-2"></i>Offers & Promotions
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action" onclick="showSection('contacts')">
+                                    <i class="fas fa-envelope me-2"></i>Contact Inquiries
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <!-- Homepage Content Section -->
+                    <div id="homepageSection" class="content-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-edit me-2"></i>Edit Homepage Content</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="homepageForm">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="homepageTitle" class="form-label">Page Title</label>
+                                                <input type="text" class="form-control" id="homepageTitle" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="homepageDescription" class="form-label">Description</label>
+                                                <textarea class="form-control" id="homepageDescription" rows="3" required></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="heroImageFile" class="form-label">Hero Image Upload</label>
+                                                <input type="file" class="form-control" id="heroImageFile" accept="image/*">
+                                                <small class="text-muted">Upload hero background image</small>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="bannerImageFile" class="form-label">Banner Image Upload</label>
+                                                <input type="file" class="form-control" id="bannerImageFile" accept="image/*">
+                                                <small class="text-muted">Upload banner image</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Carousel Section -->
+                    <div id="carouselSection" class="content-section hidden">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-images me-2"></i>Carousel Images</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <!-- Carousel Management -->
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h6><i class="fas fa-list me-2"></i>Manage Carousel Images</h6>
+                                                <div>
+                                                    <button id="selectAllBtn" class="btn btn-sm btn-outline-primary me-2">
+                                                        <i class="fas fa-check-square me-1"></i>Select All
+                                                    </button>
+                                                    <button id="deleteSelectedBtn" class="btn btn-sm btn-danger" disabled>
+                                                        <i class="fas fa-trash me-1"></i>Delete Selected
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div id="carouselManagementList" class="border rounded p-3" style="max-height: 300px; overflow-y: auto;">
+                                                <!-- Carousel management items will be loaded here -->
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Carousel Preview -->
+                                        <div>
+                                            <h6><i class="fas fa-eye me-2"></i>Preview</h6>
+                                            <div id="carouselPreview" class="carousel slide" data-bs-ride="carousel">
+                                                <div class="carousel-inner" id="carouselInner"></div>
+                                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselPreview" data-bs-slide="prev">
+                                                    <span class="carousel-control-prev-icon"></span>
+                                                </button>
+                                                <button class="carousel-control-next" type="button" data-bs-target="#carouselPreview" data-bs-slide="next">
+                                                    <span class="carousel-control-next-icon"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <form id="carouselForm">
+                                            <div class="mb-3">
+                                                <label for="carouselImageFile" class="form-label">Upload Image</label>
+                                                <input type="file" class="form-control" id="carouselImageFile" accept="image/*" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="carouselTitle" class="form-label">Title (Optional)</label>
+                                                <input type="text" class="form-control" id="carouselTitle" placeholder="Enter title (optional)">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="carouselDescription" class="form-label">Description (Optional)</label>
+                                                <textarea class="form-control" id="carouselDescription" rows="2" placeholder="Enter description (optional)"></textarea>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Add to Carousel</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Logo Section -->
+                    <div id="logoSection" class="content-section hidden">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-image me-2"></i>Logo Management</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>Current Logo</h6>
+                                        <img id="currentLogo" src="/api/image/logo" alt="Current Logo" class="image-preview" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                        <p class="text-muted mt-2">Current logo will be displayed here</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <form id="logoForm">
+                                            <div class="mb-3">
+                                                <label for="logoFile" class="form-label">Upload New Logo</label>
+                                                <input type="file" class="form-control" id="logoFile" accept="image/*" required>
+                                                <small class="text-muted">Upload logo file (PNG, JPG, SVG recommended)</small>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Update Logo</button>
+                                            <button type="button" class="btn btn-outline-secondary ms-2" onclick="refreshLogo()">Refresh Logo</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Offers Section -->
+                    <div id="offersSection" class="content-section hidden">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-gift me-2"></i>Offers & Promotions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div id="offersList">
+                                            <!-- Offers will be loaded here -->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <form id="offerForm">
+                                            <input type="hidden" id="editingOfferId" value="">
+                                            <div class="mb-3">
+                                                <label for="offerTitle" class="form-label">Offer Title</label>
+                                                <input type="text" class="form-control" id="offerTitle" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="offerDescription" class="form-label">Description</label>
+                                                <textarea class="form-control" id="offerDescription" rows="3" required></textarea>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="offerImageFile" class="form-label">Offer Image</label>
+                                                <input type="file" class="form-control" id="offerImageFile" accept="image/*">
+                                                <small class="text-muted">Leave empty to keep existing image</small>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="offerDiscount" class="form-label">Discount (%)</label>
+                                                <input type="number" class="form-control" id="offerDiscount" min="0" max="100">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="offerValidUntil" class="form-label">Valid Until</label>
+                                                <input type="date" class="form-control" id="offerValidUntil">
+                                            </div>
+                                            <div class="d-flex gap-2">
+                                                <button type="submit" class="btn btn-primary" id="offerSubmitBtn">Add Offer</button>
+                                                <button type="button" class="btn btn-secondary" id="cancelEditBtn" onclick="cancelEditOffer()" style="display: none;">Cancel Edit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Inquiries Section -->
+                    <div id="contactsSection" class="content-section hidden">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-envelope me-2"></i>Contact Inquiries</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h6><i class="fas fa-list me-2"></i>All Contact Inquiries</h6>
+                                            <div>
+                                                <button id="markAllReadBtn" class="btn btn-sm btn-outline-success me-2">
+                                                    <i class="fas fa-check-double me-1"></i>Mark All as Read
+                                                </button>
+                                                <button id="deleteAllInquiriesBtn" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash me-1"></i>Delete All
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div id="contactsList" class="border rounded p-3" style="max-height: 600px; overflow-y: auto;">
+                                            <!-- Contact inquiries will be loaded here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let authToken = '';
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    authToken = data.token;
+                    document.getElementById('loginSection').classList.add('hidden');
+                    document.getElementById('adminDashboard').classList.remove('hidden');
+                    document.getElementById('adminInfo').textContent = `Welcome, ${data.username}`;
+                    loadHomepageData();
+                } else {
+                    alert('Invalid credentials.');
+                }
+            } catch (error) {
+                alert('Login failed.');
+            }
+        });
+
+        // Logout
+        function logout() {
+            authToken = '';
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('adminDashboard').classList.add('hidden');
+            document.getElementById('loginForm').reset();
+        }
+
+        // Show sections
+        function showSection(sectionName) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(sectionName + 'Section').classList.remove('hidden');
+            
+            if (sectionName === 'carousel') loadCarouselData();
+            if (sectionName === 'logo') loadLogoData();
+            if (sectionName === 'offers') loadOffersData();
+            if (sectionName === 'contacts') loadContactsData();
+        }
+
+        // Load homepage data
+        async function loadHomepageData() {
+            try {
+                const response = await fetch('/api/homepage');
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('homepageTitle').value = data.title || '';
+                    document.getElementById('homepageDescription').value = data.description || '';
+                }
+            } catch (error) {
+                console.error('Error loading homepage data:', error);
+            }
+        }
+
+        // Save homepage
+        document.getElementById('homepageForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('title', document.getElementById('homepageTitle').value);
+            formData.append('description', document.getElementById('homepageDescription').value);
+
+            const heroFile = document.getElementById('heroImageFile').files[0];
+            const bannerFile = document.getElementById('bannerImageFile').files[0];
+
+            if (heroFile) {
+                formData.append('heroImage', heroFile);
+            }
+            if (bannerFile) {
+                formData.append('bannerImage', bannerFile);
+            }
+
+            try {
+                const response = await fetch('/api/homepage', {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert('Homepage updated successfully!');
+                    // Don't reset the form completely, just clear the file inputs
+                    document.getElementById('heroImageFile').value = '';
+                    document.getElementById('bannerImageFile').value = '';
+                } else {
+                    const errorData = await response.text();
+                    alert('Failed to update homepage: ' + errorData);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error updating homepage.');
+            }
+        });
+
+        // Load carousel data from database
+        async function loadCarouselData() {
+            try {
+                const response = await fetch('/api/carousel');
+                if (response.ok) {
+                    const carouselData = await response.json();
+                    updateCarousel(carouselData);
+                    updateCarouselManagement(carouselData);
+                }
+            } catch (error) {
+                console.error('Error loading carousel data:', error);
+            }
+        }
+
+        // Update carousel display
+        function updateCarousel(data) {
+            const carouselInner = document.getElementById('carouselInner');
+            carouselInner.innerHTML = '';
+            
+            data.forEach((item, index) => {
+                const carouselItem = document.createElement('div');
+                carouselItem.className = `carousel-item ${index === 0 ? 'active' : ''}`;
+                
+                // Handle null/empty title and description
+                const title = item.title || 'Featured Image';
+                const description = item.description || '';
+                
+                carouselItem.innerHTML = `
+                    <img src="${item.imageUrl}" class="d-block w-100" alt="${title}" style="height: 300px; object-fit: cover;">
+                    ${(title && title !== 'Untitled') || description ? `
+                        <div class="carousel-caption">
+                            ${title && title !== 'Untitled' ? `<h5>${title}</h5>` : ''}
+                            ${description ? `<p>${description}</p>` : ''}
+                        </div>
+                    ` : ''}
+                `;
+                carouselInner.appendChild(carouselItem);
+            });
+        }
+
+        // Update carousel management list
+        function updateCarouselManagement(data) {
+            const managementList = document.getElementById('carouselManagementList');
+            managementList.innerHTML = '';
+            
+            if (data.length === 0) {
+                managementList.innerHTML = '<p class="text-muted text-center">No carousel images found</p>';
+                return;
+            }
+            
+            data.forEach((item, index) => {
+                const title = item.title || 'Untitled';
+                const description = item.description || '';
+                
+                const managementItem = document.createElement('div');
+                managementItem.className = 'd-flex align-items-center border-bottom py-2 carousel-management-item';
+                managementItem.innerHTML = `
+                    <div class="form-check me-3">
+                        <input class="form-check-input carousel-checkbox" type="checkbox" value="${item.id}" id="carousel${item.id}">
+                    </div>
+                    <div class="flex-grow-1 me-3">
+                        <img src="${item.imageUrl}" alt="${title}" style="width: 60px; height: 40px; object-fit: cover;" class="rounded border">
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="fw-bold"><i class="fas fa-image me-1"></i>${title}</div>
+                        ${description ? `<div class="text-muted small"><i class="fas fa-align-left me-1"></i>${description}</div>` : ''}
+                        <div class="text-muted small"><i class="fas fa-sort-numeric-up me-1"></i>Order: ${item.displayOrder}</div>
+                    </div>
+                    <div class="ms-auto">
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteCarouselImage(${item.id})" title="Delete this image">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                managementList.appendChild(managementItem);
+            });
+            
+            // Add event listeners for checkboxes
+            document.querySelectorAll('.carousel-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', updateDeleteButtonState);
+            });
+        }
+
+        // Update delete button state based on selections
+        function updateDeleteButtonState() {
+            const selectedCheckboxes = document.querySelectorAll('.carousel-checkbox:checked');
+            const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+            deleteSelectedBtn.disabled = selectedCheckboxes.length === 0;
+        }
+
+        // Select all carousel images
+        function selectAllCarouselImages() {
+            const checkboxes = document.querySelectorAll('.carousel-checkbox');
+            const selectAllBtn = document.getElementById('selectAllBtn');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = !allChecked;
+            });
+            
+            selectAllBtn.textContent = allChecked ? 'Select All' : 'Deselect All';
+            updateDeleteButtonState();
+        }
+
+        // Delete selected carousel images
+        async function deleteSelectedCarouselImages() {
+            const selectedCheckboxes = document.querySelectorAll('.carousel-checkbox:checked');
+            const selectedIds = Array.from(selectedCheckboxes).map(cb => parseInt(cb.value));
+            
+            if (selectedIds.length === 0) {
+                alert('Please select images to delete.');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to delete ${selectedIds.length} carousel image(s)?`)) {
+                return;
+            }
+            
+            try {
+                const deletePromises = selectedIds.map(id => 
+                    fetch(`/api/carousel/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        }
+                    })
+                );
+                
+                const results = await Promise.all(deletePromises);
+                const failedDeletes = results.filter(result => !result.ok);
+                
+                if (failedDeletes.length === 0) {
+                    alert('Selected carousel images deleted successfully!');
+                    loadCarouselData();
+                } else {
+                    alert(`Failed to delete ${failedDeletes.length} image(s).`);
+                }
+            } catch (error) {
+                console.error('Error deleting carousel images:', error);
+                alert('Error deleting carousel images.');
+            }
+        }
+
+        // Delete individual carousel image
+        async function deleteCarouselImage(id) {
+            if (!confirm('Are you sure you want to delete this carousel image?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/carousel/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    alert('Carousel image deleted successfully!');
+                    loadCarouselData();
+                } else {
+                    alert('Failed to delete carousel image.');
+                }
+            } catch (error) {
+                console.error('Error deleting carousel image:', error);
+                alert('Error deleting carousel image.');
+            }
+        }
+
+        // Add carousel image with file upload
+        document.getElementById('carouselForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const file = document.getElementById('carouselImageFile').files[0];
+            const title = document.getElementById('carouselTitle').value.trim();
+            const description = document.getElementById('carouselDescription').value.trim();
+
+            if (!file) {
+                alert('Please select an image file.');
+                return;
+            }
+
+            try {
+                // First upload the image
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('imageType', 'carousel');
+                // Only append title and description if they have values
+                if (title) {
+                    formData.append('title', title);
+                }
+                if (description) {
+                    formData.append('description', description);
+                }
+
+                const uploadResponse = await fetch('/api/image/upload', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+
+                if (uploadResponse.ok) {
+                    const uploadResult = await uploadResponse.json();
+                    
+                    // Then create carousel entry
+                    const carouselResponse = await fetch('/api/carousel', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify({
+                            title: title || 'Untitled', // Provide default title if empty
+                            description: description || null, // Allow null description
+                            imageUploadId: uploadResult.id,
+                            displayOrder: 0
+                        })
+                    });
+
+                    if (carouselResponse.ok) {
+                        alert('Carousel image added successfully!');
+                        this.reset();
+                        loadCarouselData();
+                    } else {
+                        alert('Failed to add carousel image.');
+                    }
+                } else {
+                    const errorText = await uploadResponse.text();
+                    console.error('Image upload failed:', errorText);
+                    alert('Failed to upload image. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error adding carousel image.');
+            }
+        });
+
+        // Load logo data
+        function loadLogoData() {
+            const logoImg = document.getElementById('currentLogo');
+            const logoText = logoImg.nextElementSibling;
+            
+            // Show loading state
+            logoImg.style.display = 'none';
+            logoText.style.display = 'block';
+            logoText.textContent = 'Loading logo...';
+            
+            // Load logo with cache busting
+            logoImg.src = '/api/image/logo?' + new Date().getTime();
+            
+            // Handle successful load
+            logoImg.onload = function() {
+                logoImg.style.display = 'block';
+                logoText.style.display = 'none';
+            };
+            
+            // Handle error
+            logoImg.onerror = function() {
+                logoImg.style.display = 'none';
+                logoText.style.display = 'block';
+                logoText.textContent = 'No logo uploaded yet';
+            };
+        }
+
+        // Update logo with file upload
+        document.getElementById('logoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const file = document.getElementById('logoFile').files[0];
+            if (!file) {
+                alert('Please select a logo file.');
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('imageType', 'logo');
+
+                const response = await fetch('/api/image/upload', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert('Logo updated successfully!');
+                    this.reset();
+                    loadLogoData();
+                } else {
+                    const errorText = await response.text();
+                    console.error('Logo upload failed:', errorText);
+                    alert('Failed to update logo. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error updating logo.');
+            }
+        });
+
+        // Load offers data from database
+        async function loadOffersData() {
+            try {
+                const response = await fetch('/api/offers');
+                if (response.ok) {
+                    const offers = await response.json();
+                    const offersList = document.getElementById('offersList');
+                    
+                    offersList.innerHTML = offers.map(offer => `
+                        <div class="offer-card">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h6>${offer.title}</h6>
+                                    <p>${offer.description}</p>
+                                    ${offer.discountPercentage ? `<span class="badge bg-success">${offer.discountPercentage}% OFF</span>` : ''}
+                                    ${offer.validUntil ? `<small class="text-muted d-block">Valid until: ${new Date(offer.validUntil).toLocaleDateString()}</small>` : ''}
+                                </div>
+                                <div class="col-md-4">
+                                    ${offer.imageUrl ? `<img src="${offer.imageUrl}" alt="${offer.title}" style="max-width: 100px; height: auto;">` : ''}
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-primary me-1" onclick="editOffer(${offer.id}, '${offer.title}', '${offer.description.replace(/'/g, "\\'")}', ${offer.discountPercentage || 'null'}, '${offer.validUntil || ''}')">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteOffer(${offer.id})">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading offers:', error);
+            }
+        }
+
+        // Add/Edit offer with file upload
+        document.getElementById('offerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const editingOfferId = document.getElementById('editingOfferId').value;
+            const title = document.getElementById('offerTitle').value;
+            const description = document.getElementById('offerDescription').value;
+            const discount = document.getElementById('offerDiscount').value;
+            const validUntil = document.getElementById('offerValidUntil').value;
+            const file = document.getElementById('offerImageFile').files[0];
+
+            try {
+                let imageUploadId = null;
+                
+                if (file) {
+                    // Upload image first
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('imageType', 'offer');
+                    formData.append('title', title);
+
+                    const uploadResponse = await fetch('/api/image/upload', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: formData
+                    });
+
+                    if (uploadResponse.ok) {
+                        const uploadResult = await uploadResponse.json();
+                        imageUploadId = uploadResult.id;
+                    }
+                }
+
+                // Prepare offer data
+                const offerData = {
+                    title: title,
+                    description: description,
+                    imageUploadId: imageUploadId,
+                    discountPercentage: discount ? parseFloat(discount) : null,
+                    validUntil: validUntil ? new Date(validUntil) : null
+                };
+
+                let response;
+                if (editingOfferId) {
+                    // Update existing offer
+                    response = await fetch(`/api/offers/${editingOfferId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify(offerData)
+                    });
+                } else {
+                    // Create new offer
+                    response = await fetch('/api/offers', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify(offerData)
+                    });
+                }
+
+                if (response.ok) {
+                    alert(editingOfferId ? 'Offer updated successfully!' : 'Offer added successfully!');
+                    this.reset();
+                    document.getElementById('editingOfferId').value = '';
+                    document.getElementById('offerSubmitBtn').textContent = 'Add Offer';
+                    document.getElementById('cancelEditBtn').style.display = 'none';
+                    loadOffersData();
+                } else {
+                    alert(editingOfferId ? 'Failed to update offer.' : 'Failed to add offer.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert(editingOfferId ? 'Error updating offer.' : 'Error adding offer.');
+            }
+        });
+
+        // Refresh logo function
+        function refreshLogo() {
+            const logoImg = document.getElementById('currentLogo');
+            if (logoImg) {
+                logoImg.src = '/api/image/logo?' + new Date().getTime();
+                console.log('Refreshing logo...');
+            }
+        }
+
+        // Add event listeners for carousel management buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectAllBtn = document.getElementById('selectAllBtn');
+            const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+            
+            if (selectAllBtn) {
+                selectAllBtn.addEventListener('click', selectAllCarouselImages);
+            }
+            
+            if (deleteSelectedBtn) {
+                deleteSelectedBtn.addEventListener('click', deleteSelectedCarouselImages);
+            }
+        });
+
+        // Load contact inquiries data
+        async function loadContactsData() {
+            try {
+                const response = await fetch('/api/contact/inquiries', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const contacts = await response.json();
+                    updateContactsList(contacts);
+                } else {
+                    console.error('Failed to load contact inquiries');
+                }
+            } catch (error) {
+                console.error('Error loading contact inquiries:', error);
+            }
+        }
+
+        // Update contacts list
+        function updateContactsList(contacts) {
+            const contactsList = document.getElementById('contactsList');
+            
+            if (contacts.length === 0) {
+                contactsList.innerHTML = '<p class="text-muted text-center">No contact inquiries found.</p>';
+                return;
+            }
+
+            contactsList.innerHTML = contacts.map(contact => `
+                <div class="card mb-3 ${contact.isRead ? 'border-secondary' : 'border-primary'}" id="contact-${contact.id}">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">${contact.name}</h6>
+                            <small class="text-muted">${contact.email} | ${contact.phone}</small>
+                        </div>
+                        <div>
+                            <span class="badge ${contact.isRead ? 'bg-secondary' : 'bg-primary'} me-2">
+                                ${contact.isRead ? 'Read' : 'New'}
+                            </span>
+                            <small class="text-muted">${new Date(contact.createdAt).toLocaleString()}</small>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        ${contact.subject ? `<p><strong>Subject:</strong> ${contact.subject}</p>` : ''}
+                        ${contact.visaType ? `<p><strong>Visa Type:</strong> ${contact.visaType}</p>` : ''}
+                        <p><strong>Message:</strong></p>
+                        <p class="mb-3">${contact.message.replace(/\n/g, '<br>')}</p>
+                        <div class="d-flex gap-2">
+                            ${!contact.isRead ? `
+                                <button class="btn btn-sm btn-success" onclick="markAsRead(${contact.id})">
+                                    <i class="fas fa-check me-1"></i>Mark as Read
+                                </button>
+                            ` : ''}
+                            <button class="btn btn-sm btn-danger" onclick="deleteInquiry(${contact.id})">
+                                <i class="fas fa-trash me-1"></i>Delete
+                            </button>
+                            <a href="mailto:${contact.email}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-reply me-1"></i>Reply
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Mark inquiry as read
+        async function markAsRead(id) {
+            try {
+                const response = await fetch(`/api/contact/inquiries/${id}/mark-read`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    loadContactsData(); // Reload the list
+                } else {
+                    alert('Failed to mark as read.');
+                }
+            } catch (error) {
+                console.error('Error marking as read:', error);
+                alert('Error marking as read.');
+            }
+        }
+
+        // Delete inquiry
+        async function deleteInquiry(id) {
+            if (!confirm('Are you sure you want to delete this inquiry?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/contact/inquiries/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    loadContactsData(); // Reload the list
+                } else {
+                    alert('Failed to delete inquiry.');
+                }
+            } catch (error) {
+                console.error('Error deleting inquiry:', error);
+                alert('Error deleting inquiry.');
+            }
+        }
+
+        // Mark all as read
+        async function markAllAsRead() {
+            if (!confirm('Mark all inquiries as read?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/contact/inquiries', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const contacts = await response.json();
+                    const unreadContacts = contacts.filter(c => !c.isRead);
+                    
+                    for (const contact of unreadContacts) {
+                        await fetch(`/api/contact/inquiries/${contact.id}/mark-read`, {
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': `Bearer ${authToken}`
+                            }
+                        });
+                    }
+                    
+                    loadContactsData(); // Reload the list
+                    alert('All inquiries marked as read.');
+                }
+            } catch (error) {
+                console.error('Error marking all as read:', error);
+                alert('Error marking all as read.');
+            }
+        }
+
+        // Delete all inquiries
+        async function deleteAllInquiries() {
+            if (!confirm('Are you sure you want to delete ALL inquiries? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/contact/inquiries', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const contacts = await response.json();
+                    
+                    for (const contact of contacts) {
+                        await fetch(`/api/contact/inquiries/${contact.id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${authToken}`
+                            }
+                        });
+                    }
+                    
+                    loadContactsData(); // Reload the list
+                    alert('All inquiries deleted.');
+                }
+            } catch (error) {
+                console.error('Error deleting all inquiries:', error);
+                alert('Error deleting all inquiries.');
+            }
+        }
+
+        // Add event listeners for contact management buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const markAllReadBtn = document.getElementById('markAllReadBtn');
+            const deleteAllInquiriesBtn = document.getElementById('deleteAllInquiriesBtn');
+            
+            if (markAllReadBtn) {
+                markAllReadBtn.addEventListener('click', markAllAsRead);
+            }
+            
+            if (deleteAllInquiriesBtn) {
+                deleteAllInquiriesBtn.addEventListener('click', deleteAllInquiries);
+            }
+        });
+
+        // Edit offer function
+        function editOffer(id, title, description, discountPercentage, validUntil) {
+            document.getElementById('editingOfferId').value = id;
+            document.getElementById('offerTitle').value = title;
+            document.getElementById('offerDescription').value = description;
+            document.getElementById('offerDiscount').value = discountPercentage || '';
+            document.getElementById('offerValidUntil').value = validUntil || '';
+            document.getElementById('offerImageFile').value = ''; // Clear file input
+            document.getElementById('offerSubmitBtn').textContent = 'Update Offer';
+            document.getElementById('cancelEditBtn').style.display = 'inline-block';
+            
+            // Scroll to form
+            document.getElementById('offerForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Cancel edit offer function
+        function cancelEditOffer() {
+            document.getElementById('editingOfferId').value = '';
+            document.getElementById('offerForm').reset();
+            document.getElementById('offerSubmitBtn').textContent = 'Add Offer';
+            document.getElementById('cancelEditBtn').style.display = 'none';
+        }
+
+        // Delete offer function
+        async function deleteOffer(id) {
+            if (!confirm('Are you sure you want to delete this offer?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/offers/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    alert('Offer deleted successfully!');
+                    loadOffersData();
+                } else {
+                    alert('Failed to delete offer.');
+                }
+            } catch (error) {
+                console.error('Error deleting offer:', error);
+                alert('Error deleting offer.');
+            }
+        }
+    </script>
+</body>
+</html> 

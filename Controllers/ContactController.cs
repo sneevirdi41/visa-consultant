@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using visa_consulatant.Data;
 using visa_consulatant.Models;
+using visa_consulatant.Services;
 
 namespace visa_consulatant.Controllers
 {
@@ -11,10 +12,12 @@ namespace visa_consulatant.Controllers
     public class ContactController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEmailService _emailService;
 
-        public ContactController(ApplicationDbContext context)
+        public ContactController(ApplicationDbContext context, IEmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         [HttpPost("inquiry")]
@@ -25,6 +28,9 @@ namespace visa_consulatant.Controllers
 
             _context.ContactInquiries.Add(inquiry);
             await _context.SaveChangesAsync();
+
+            // Send email notification to admin
+            await _emailService.SendContactInquiryNotificationAsync(inquiry);
 
             return CreatedAtAction(nameof(GetInquiry), new { id = inquiry.Id }, inquiry);
         }

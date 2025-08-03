@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: visa-consultant-app
+    env: docker
+    plan: free
+    region: oregon
+    buildCommand: ""
+    startCommand: ""
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: DB_HOST
+        sync: false
+      - key: DB_NAME
+        value: visa_consultant
+      - key: DB_USER
+        value: postgres
+      - key: DB_PASSWORD
+        sync: false
+      - key: JWT_SECRET_KEY
+        sync: false
+      - key: SMTP_SERVER
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USERNAME
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: FROM_EMAIL
+        sync: false
+      - key: ADMIN_EMAIL
+        value: admin@gurukirpa.com
+
+databases:
+  - name: visa-consultant-db
+    databaseName: visa_consultant
+    user: postgres
+    plan: free
+    region: oregon 
