@@ -28,24 +28,6 @@ if (string.IsNullOrEmpty(connectionString))
     // Use a fallback connection string for development
     connectionString = "Host=localhost;Database=visa_consultant;Username=postgres;Password=password";
 }
-else
-{
-    // Handle Railway's DATABASE_URL format if needed
-    if (connectionString.StartsWith("postgres://") || connectionString.StartsWith("postgresql://"))
-    {
-        Console.WriteLine("Converting Railway DATABASE_URL format...");
-        // Railway DATABASE_URL format: postgres://username:password@host:port/database
-        var uri = new Uri(connectionString);
-        var username = uri.UserInfo.Split(':')[0];
-        var password = uri.UserInfo.Split(':')[1];
-        var host = uri.Host;
-        var port = uri.Port;
-        var database = uri.AbsolutePath.TrimStart('/');
-        
-        connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password};";
-        Console.WriteLine($"Converted connection string: {connectionString.Substring(0, Math.Min(30, connectionString.Length))}...");
-    }
-}
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
