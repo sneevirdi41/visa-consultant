@@ -61,6 +61,17 @@ else if (!string.IsNullOrEmpty(databaseUrl) && !databaseUrl.StartsWith("${{"))
     Console.WriteLine("Using DATABASE_URL from environment");
 }
 
+// Force build connection string from individual variables if we're in production and have the variables
+if (builder.Environment.IsProduction() && string.IsNullOrEmpty(connectionString))
+{
+    if (!string.IsNullOrEmpty(pgHost) && !string.IsNullOrEmpty(pgDatabase) && !string.IsNullOrEmpty(pgUser) && !string.IsNullOrEmpty(pgPassword))
+    {
+        var port = string.IsNullOrEmpty(pgPort) ? "5432" : pgPort;
+        connectionString = $"Host={pgHost};Port={port};Database={pgDatabase};Username={pgUser};Password={pgPassword};SSL Mode=Prefer;Trust Server Certificate=true;";
+        Console.WriteLine("Forced connection string build from individual environment variables for production");
+    }
+}
+
 // Additional fallback: Try to get the actual DATABASE_URL from Railway's internal resolution
 if (string.IsNullOrEmpty(connectionString) || connectionString.Contains("visa_consultant.db"))
 {
@@ -226,8 +237,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Add a simple health check endpoint
-app.MapGet("/health", () => new { status = "healthy", timestamp = DateTime.UtcNow });
+// Health check endpoint is now handled by HealthController
 
 // Ensure database is migrated with retry logic
 using (var scope = app.Services.CreateScope())
