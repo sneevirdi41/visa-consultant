@@ -1,9 +1,52 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Text;
 using visa_consulatant.Data;
 using visa_consulatant.Services;
+
+// File upload operation filter for Swagger
+public class FileUploadOperationFilter : IOperationFilter
+{
+    public void Apply(OpenApiOperation operation, OperationFilterContext context)
+    {
+        var fileParameters = context.ApiDescription.ParameterDescriptions
+            .Where(x => x.ModelMetadata?.ModelType == typeof(IFormFile));
+
+        foreach (var parameter in fileParameters)
+        {
+            var content = new Dictionary<string, OpenApiMediaType>
+            {
+                {
+                    "multipart/form-data", new OpenApiMediaType
+                    {
+                        Schema = new OpenApiSchema
+                        {
+                            Type = "object",
+                            Properties = new Dictionary<string, OpenApiSchema>
+                            {
+                                {
+                                    parameter.Name, new OpenApiSchema
+                                    {
+                                        Type = "string",
+                                        Format = "binary"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            operation.RequestBody = new OpenApiRequestBody
+            {
+                Content = content
+            };
+        }
+    }
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +68,24 @@ if (string.IsNullOrEmpty(connectionString))
     Console.WriteLine("WARNING: No database connection string found!");
     // Use a fallback connection string for development
     connectionString = "Host=localhost;Database=visa_consultant;Username=postgres;Password=password";
+}
+else
+{
+    // Handle Railway's DATABASE_URL format if needed
+    if (connectionString.StartsWith("postgres://"))
+    {
+        Console.WriteLine("Converting Railway DATABASE_URL format...");
+        // Railway DATABASE_URL format: postgres://username:password@host:port/database
+        var uri = new Uri(connectionString);
+        var username = uri.UserInfo.Split(':')[0];
+        var password = uri.UserInfo.Split(':')[1];
+        var host = uri.Host;
+        var port = uri.Port;
+        var database = uri.AbsolutePath.TrimStart('/');
+        
+        connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password};";
+        Console.WriteLine($"Converted connection string: {connectionString.Substring(0, Math.Min(30, connectionString.Length))}...");
+    }
 }
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -64,7 +125,38 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Visa Consultant API", Version = "v1" });
+    
+    // Configure Swagger to handle file uploads
+    c.OperationFilter<FileUploadOperationFilter>();
+    
+    // Add JWT authentication to Swagger
+    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+    
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 // Add CORS
 builder.Services.AddCors(options =>
