@@ -46,14 +46,22 @@ else
         Console.WriteLine($"Original connection string: {connectionString}");
         try
         {
-            // Parse the connection string manually
-            var uri = new Uri(connectionString);
-            var userInfo = uri.UserInfo.Split(':');
-            var username = Uri.UnescapeDataString(userInfo[0]);
-            var password = Uri.UnescapeDataString(userInfo[1]);
-            var host = uri.Host;
-            var port = uri.Port;
-            var database = uri.AbsolutePath.TrimStart('/');
+            // Manual parsing of postgresql:// format
+            var uri = connectionString.Replace("postgresql://", "").Replace("postgres://", "");
+            var atIndex = uri.IndexOf('@');
+            var slashIndex = uri.IndexOf('/', atIndex);
+            
+            var userInfo = uri.Substring(0, atIndex);
+            var hostPort = uri.Substring(atIndex + 1, slashIndex - atIndex - 1);
+            var database = uri.Substring(slashIndex + 1);
+            
+            var colonIndex = userInfo.IndexOf(':');
+            var username = userInfo.Substring(0, colonIndex);
+            var password = userInfo.Substring(colonIndex + 1);
+            
+            var hostPortParts = hostPort.Split(':');
+            var host = hostPortParts[0];
+            var port = hostPortParts.Length > 1 ? hostPortParts[1] : "5432";
             
             Console.WriteLine($"Extracted - Username: {username}, Host: {host}, Port: {port}, Database: {database}");
             
