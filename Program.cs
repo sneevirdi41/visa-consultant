@@ -31,7 +31,7 @@ if (string.IsNullOrEmpty(connectionString))
 else
 {
     // Handle Railway's DATABASE_URL format if needed
-    if (connectionString.StartsWith("postgres://"))
+    if (connectionString.StartsWith("postgres://") || connectionString.StartsWith("postgresql://"))
     {
         Console.WriteLine("Converting Railway DATABASE_URL format...");
         // Railway DATABASE_URL format: postgres://username:password@host:port/database
