@@ -40,9 +40,20 @@
         }
 
         .logo-image {
-            height: 50px;
-            width: auto;
-            filter: brightness(0) invert(1);
+            height: 90px;
+            width: 90px;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            border-radius: 50%;
+            padding: 10px;
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+            object-fit: contain;
+            transition: all 0.3s ease;
+            /* Removed filter that was making logo invisible */
+        }
+        
+        .logo-image:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.5);
         }
 
         .logo-text {
@@ -91,6 +102,18 @@
             font-weight: bold;
             margin-bottom: 20px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .hero-section p {
@@ -138,24 +161,55 @@
         }
 
         .hero-logo img {
-            height: 80px;
-            width: auto;
-            filter: brightness(0) invert(1);
+            height: 150px;
+            width: 150px;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            border-radius: 50%;
+            padding: 15px;
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.5);
+            object-fit: contain;
+            transition: all 0.3s ease;
+            /* Removed filter that was making logo invisible */
             margin-bottom: 20px;
+        }
+        
+        .hero-logo img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 30px rgba(0, 123, 255, 0.6);
         }
 
         .service-card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            border: 1px solid rgba(0, 123, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            transition: all 0.4s ease;
             margin-bottom: 30px;
             overflow: hidden;
+            position: relative;
+        }
+        
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #007bff, #0056b3, #007bff);
+            background-size: 200% 100%;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
 
         .service-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 123, 255, 0.15);
+            border-color: rgba(0, 123, 255, 0.3);
         }
 
         .service-card .card-body {
@@ -183,15 +237,33 @@
         .btn-primary {
             background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
             border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
+            padding: 15px 35px;
+            border-radius: 30px;
             font-weight: bold;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-primary:hover::before {
+            left: 100%;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.5);
         }
 
         .footer {
@@ -243,11 +315,31 @@
             color: white !important;
             font-weight: 500;
             transition: all 0.3s ease;
+            position: relative;
+            padding: 8px 16px !important;
+            border-radius: 20px;
+        }
+        
+        .navbar-nav .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #93c5fd, #60a5fa);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
         }
 
         .navbar-nav .nav-link:hover {
             color: #93c5fd !important;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar-nav .nav-link:hover::before {
+            width: 80%;
         }
 
         @media (max-width: 768px) {
@@ -276,7 +368,7 @@
         <div class="container">
             <a class="navbar-brand" href="#">
                 <div class="logo-container">
-                                         <img src="/api/image/logo" alt="Guru Kirpa Immigration" class="logo-image" id="navbarLogo" onerror="this.style.display='none'">
+                                         <img src="/images/logo.png" alt="Guru Kirpa Immigration" class="logo-image" id="navbarLogo">
                     <div class="logo-text">
                         <div class="logo-main">Guru Kirpa</div>
                         <div class="logo-subtitle">Immigration</div>
@@ -313,7 +405,7 @@
         <div class="container">
             <div class="hero-content">
                 <div class="hero-logo">
-                    <img src="/api/image/logo" alt="Guru Kirpa Immigration" id="heroLogo" onerror="this.style.display='none'">
+                    <img src="/images/logo.png" alt="Guru Kirpa Immigration" id="heroLogo">
                 </div>
                 <h1>Your Gateway to Australia</h1>
                 <p>Expert immigration consultancy services to help you achieve your dreams of living and working in Australia.</p>
@@ -501,7 +593,7 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="logo-container mb-3">
-                                                 <img src="/api/image/logo" alt="Guru Kirpa Immigration" class="logo-image" style="height: 40px;" id="footerLogo" onerror="this.style.display='none'">
+                                                 <img src="/images/logo.png" alt="Guru Kirpa Immigration" class="logo-image" style="height: 80px; width: 80px; background: linear-gradient(135deg, #007bff, #0056b3); border-radius: 50%; padding: 8px; box-shadow: 0 5px 18px rgba(0, 123, 255, 0.4); object-fit: contain; transition: all 0.3s ease;" id="footerLogo">
                         <div class="logo-text">
                             <div class="logo-main">Guru Kirpa</div>
                             <div class="logo-subtitle">Immigration</div>
@@ -821,36 +913,7 @@
             });
         }
 
-        // Load logo with cache busting
-        function loadLogo() {
-            const logoImages = ['heroLogo', 'navbarLogo', 'footerLogo'];
-            const timestamp = new Date().getTime();
-            
-            logoImages.forEach(id => {
-                const logoImg = document.getElementById(id);
-                if (logoImg) {
-                    console.log(`Loading logo for ${id}`);
-                    logoImg.src = `/api/image/logo?t=${timestamp}`;
-                    
-                    // Handle successful load
-                    logoImg.onload = function() {
-                        console.log(`Logo ${id} loaded successfully`);
-                        this.style.display = 'block';
-                    };
-                    
-                    // Handle error
-                    logoImg.onerror = function() {
-                        console.log(`Logo ${id} failed to load`);
-                        this.style.display = 'none';
-                    };
-                }
-            });
-        }
-
-        // Refresh logo (useful after upload)
-        function refreshLogo() {
-            loadLogo();
-        }
+        // Logo is now loaded from static file, no need for dynamic loading
 
         // Load homepage content from database
         async function loadHomepageContent() {
@@ -887,7 +950,6 @@
 
         // Initialize everything when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            loadLogo();
             loadHomepageContent();
             loadServices();
             loadCarouselImages();

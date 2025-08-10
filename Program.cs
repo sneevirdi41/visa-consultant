@@ -39,9 +39,20 @@ if (!string.IsNullOrEmpty(databaseUrl) && databaseUrl.StartsWith("${{"))
 }
 
 // Build connection string from individual environment variables if DATABASE_URL is not available or is a reference
+// BUT only if we're not in development mode and explicitly want to use local SQLite
 if (string.IsNullOrEmpty(connectionString) && (string.IsNullOrEmpty(databaseUrl) || databaseUrl.StartsWith("${{")))
 {
-    if (!string.IsNullOrEmpty(pgHost) && !string.IsNullOrEmpty(pgDatabase) && !string.IsNullOrEmpty(pgUser) && !string.IsNullOrEmpty(pgPassword))
+    // Check if we're running locally and want to force SQLite
+    var forceLocalSqlite = Environment.GetEnvironmentVariable("FORCE_LOCAL_SQLITE");
+    var isLocalDevelopment = builder.Environment.IsDevelopment() || !string.IsNullOrEmpty(forceLocalSqlite);
+    
+    if (isLocalDevelopment)
+    {
+        // Force SQLite for local development
+        connectionString = "Data Source=GuruKirpaVisaConsultancy.db";
+        Console.WriteLine("Forcing SQLite for local development");
+    }
+    else if (!string.IsNullOrEmpty(pgHost) && !string.IsNullOrEmpty(pgDatabase) && !string.IsNullOrEmpty(pgUser) && !string.IsNullOrEmpty(pgPassword))
     {
         var port = string.IsNullOrEmpty(pgPort) ? "5432" : pgPort;
         connectionString = $"Host={pgHost};Port={port};Database={pgDatabase};Username={pgUser};Password={pgPassword};SSL Mode=Prefer;Trust Server Certificate=true;";
@@ -51,7 +62,7 @@ if (string.IsNullOrEmpty(connectionString) && (string.IsNullOrEmpty(databaseUrl)
     {
         Console.WriteLine("WARNING: No database connection string found!");
         // Use SQLite for local development
-        connectionString = "Data Source=visa_consultant.db";
+        connectionString = "Data Source=GuruKirpaVisaConsultancy.db";
         Console.WriteLine("Using SQLite for local development");
     }
 }
@@ -94,7 +105,10 @@ var maskedConnectionString = connectionString != null
 Console.WriteLine($"Final connection string: {maskedConnectionString}");
 
 // Use SQLite for local development, PostgreSQL for production
-if (builder.Environment.IsDevelopment() && (connectionString.Contains("localhost") || connectionString.Contains("visa_consultant.db")))
+var forceLocalSqliteProvider = Environment.GetEnvironmentVariable("FORCE_LOCAL_SQLITE");
+var isLocalDevelopmentProvider = builder.Environment.IsDevelopment() || !string.IsNullOrEmpty(forceLocalSqliteProvider);
+
+if (isLocalDevelopmentProvider && (connectionString.Contains("Data Source=") || connectionString.Contains("GuruKirpaVisaConsultancy.db")))
 {
     Console.WriteLine("Configuring SQLite for local development...");
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -229,6 +243,12 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
 app.UseStaticFiles(); // Added to serve static files
+
+// Configure default files to serve index.html at root URL
+app.UseDefaultFiles(new DefaultFilesOptions
+{
+    DefaultFileNames = new List<string> { "index.html" }
+});
 
 app.UseCors("AllowAll");
 
