@@ -89,6 +89,9 @@
                                 <a href="#" class="list-group-item list-group-item-action" onclick="showSection('contacts')">
                                     <i class="fas fa-envelope me-2"></i>Contact Inquiries
                                 </a>
+                                <a href="#" class="list-group-item list-group-item-action" onclick="showSection('contactInfo')">
+                                    <i class="fas fa-address-book me-2"></i>Contact Information
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -134,62 +137,97 @@
 
                     <!-- Carousel Section -->
                     <div id="carouselSection" class="content-section hidden">
-                        <div class="card">
+                        <h3>Carousel Image Management</h3>
+                        
+                        <!-- Single Image Upload Form -->
+                        <div class="card mb-4">
                             <div class="card-header">
-                                <h5><i class="fas fa-images me-2"></i>Carousel Images</h5>
+                                <h5>Add/Edit Single Image</h5>
                             </div>
                             <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <!-- Carousel Management -->
-                                        <div class="mb-3">
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <h6><i class="fas fa-list me-2"></i>Manage Carousel Images</h6>
-                                                <div>
-                                                    <button id="selectAllBtn" class="btn btn-sm btn-outline-primary me-2">
-                                                        <i class="fas fa-check-square me-1"></i>Select All
-                                                    </button>
-                                                    <button id="deleteSelectedBtn" class="btn btn-sm btn-danger" disabled>
-                                                        <i class="fas fa-trash me-1"></i>Delete Selected
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div id="carouselManagementList" class="border rounded p-3" style="max-height: 300px; overflow-y: auto;">
-                                                <!-- Carousel management items will be loaded here -->
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Carousel Preview -->
-                                        <div>
-                                            <h6><i class="fas fa-eye me-2"></i>Preview</h6>
-                                            <div id="carouselPreview" class="carousel slide" data-bs-ride="carousel">
-                                                <div class="carousel-inner" id="carouselInner"></div>
-                                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselPreview" data-bs-slide="prev">
-                                                    <span class="carousel-control-prev-icon"></span>
-                                                </button>
-                                                <button class="carousel-control-next" type="button" data-bs-target="#carouselPreview" data-bs-slide="next">
-                                                    <span class="carousel-control-next-icon"></span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <form id="carouselForm">
-                                            <div class="mb-3">
-                                                <label for="carouselImageFile" class="form-label">Upload Image</label>
-                                                <input type="file" class="form-control" id="carouselImageFile" accept="image/*" required>
-                                            </div>
+                                <form id="carouselForm">
+                                    <input type="hidden" id="editingCarouselId" value="">
+                                    <div class="row">
+                                        <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="carouselTitle" class="form-label">Title (Optional)</label>
-                                                <input type="text" class="form-control" id="carouselTitle" placeholder="Enter title (optional)">
+                                                <input type="text" class="form-control" id="carouselTitle" placeholder="Leave empty for auto-generated title">
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="carouselImageFile" class="form-label">Image File</label>
+                                                <input type="file" class="form-control" id="carouselImageFile">
+                                                <small class="text-muted">Leave empty to keep existing image when editing</small>
                                             </div>
                                             <div class="mb-3">
-                                                <label for="carouselDescription" class="form-label">Description (Optional)</label>
-                                                <textarea class="form-control" id="carouselDescription" rows="2" placeholder="Enter description (optional)"></textarea>
+                                                <label for="carouselDisplayOrder" class="form-label">Display Order (Optional)</label>
+                                                <input type="number" class="form-control" id="carouselDisplayOrder" min="1" value="1" placeholder="Leave empty for auto-assigned order">
                                             </div>
-                                            <button type="submit" class="btn btn-primary">Add to Carousel</button>
-                                        </form>
+                                        </div>
                                     </div>
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" class="btn btn-primary" id="carouselSubmitBtn">Add to Carousel</button>
+                                        <button type="button" class="btn btn-secondary" id="cancelCarouselEditBtn" onclick="cancelCarouselEdit()" style="display: none;">Cancel Edit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Multiple Image Upload Form -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5>Bulk Upload Multiple Images</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="bulkCarouselForm">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="bulkCarouselFiles" class="form-label">Select Multiple Images</label>
+                                                <input type="file" class="form-control" id="bulkCarouselFiles" multiple>
+                                                <small class="text-muted">Hold Ctrl/Cmd to select multiple files</small>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="bulkCarouselPrefix" class="form-label">Title Prefix (Optional)</label>
+                                                <input type="text" class="form-control" id="bulkCarouselPrefix" placeholder="e.g., 'Service' will create 'Service 1', 'Service 2', etc.">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+
+                                            <div class="mb-3">
+                                                <label for="bulkCarouselStartOrder" class="form-label">Starting Display Order (Optional)</label>
+                                                <input type="number" class="form-control" id="bulkCarouselStartOrder" min="1" value="1" placeholder="Leave empty for auto-assigned order">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" class="btn btn-success" id="bulkCarouselSubmitBtn">
+                                            <i class="fas fa-upload me-2"></i>Upload All Images
+                                        </button>
+                                        <button type="button" class="btn btn-info" id="bulkCarouselPreviewBtn" onclick="previewBulkUpload()">
+                                            <i class="fas fa-eye me-2"></i>Preview
+                                        </button>
+                                    </div>
+                                </form>
+                                
+                                <!-- Preview Section -->
+                                <div id="bulkPreviewSection" class="mt-3" style="display: none;">
+                                    <h6>Upload Preview:</h6>
+                                    <div id="bulkPreviewList" class="list-group"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Existing Images List -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Existing Carousel Images</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="carouselImagesList" class="list-group">
+                                    <!-- Images will be loaded here -->
                                 </div>
                             </div>
                         </div>
@@ -300,6 +338,97 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Contact Information Section -->
+                    <div id="contactInfoSection" class="content-section hidden">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-address-book me-2"></i>Contact Information Management</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <form id="contactInfoForm">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="companyName" class="form-label">Company Name *</label>
+                                                        <input type="text" class="form-control" id="companyName" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="address" class="form-label">Address</label>
+                                                        <textarea class="form-control" id="address" rows="2"></textarea>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="city" class="form-label">City</label>
+                                                                <input type="text" class="form-control" id="city">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="state" class="form-label">State</label>
+                                                                <input type="text" class="form-control" id="state">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="postalCode" class="form-label">Postal Code</label>
+                                                                <input type="text" class="form-control" id="postalCode">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="country" class="form-label">Country</label>
+                                                                <input type="text" class="form-control" id="country">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="phone" class="form-label">Phone</label>
+                                                        <input type="text" class="form-control" id="phone">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="mobile" class="form-label">Mobile</label>
+                                                        <input type="text" class="form-control" id="mobile">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="email" class="form-label">Email</label>
+                                                        <input type="email" class="form-control" id="email">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="website" class="form-label">Website</label>
+                                                        <input type="url" class="form-control" id="website">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="workingHours" class="form-label">Working Hours</label>
+                                                        <input type="text" class="form-control" id="workingHours">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="description" class="form-label">Description</label>
+                                                        <textarea class="form-control" id="description" rows="3"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex gap-2">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fas fa-save me-2"></i>Save Contact Information
+                                                </button>
+                                                <button type="button" class="btn btn-secondary" onclick="loadContactInfoData()">
+                                                    <i class="fas fa-refresh me-2"></i>Refresh
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -339,7 +468,7 @@
         });
 
         // Logout
-        function logout() {
+    function logout() {
             authToken = '';
             document.getElementById('loginSection').classList.remove('hidden');
             document.getElementById('adminDashboard').classList.add('hidden');
@@ -347,20 +476,21 @@
         }
 
         // Show sections
-        function showSection(sectionName) {
+    function showSection(sectionName) {
             document.querySelectorAll('.content-section').forEach(section => {
                 section.classList.add('hidden');
             });
             document.getElementById(sectionName + 'Section').classList.remove('hidden');
             
-            if (sectionName === 'carousel') loadCarouselData();
+            if (sectionName === 'carousel') loadCarouselImages();
             if (sectionName === 'logo') loadLogoData();
             if (sectionName === 'offers') loadOffersData();
             if (sectionName === 'contacts') loadContactsData();
+            if (sectionName === 'contactInfo') loadContactInfoData();
         }
 
         // Load homepage data
-        async function loadHomepageData() {
+    async function loadHomepageData() {
             try {
                 const response = await fetch('/api/homepage');
                 if (response.ok) {
@@ -415,22 +545,10 @@
             }
         });
 
-        // Load carousel data from database
-        async function loadCarouselData() {
-            try {
-                const response = await fetch('/api/carousel');
-                if (response.ok) {
-                    const carouselData = await response.json();
-                    updateCarousel(carouselData);
-                    updateCarouselManagement(carouselData);
-                }
-            } catch (error) {
-                console.error('Error loading carousel data:', error);
-            }
-        }
+
 
         // Update carousel display
-        function updateCarousel(data) {
+    function updateCarousel(data) {
             const carouselInner = document.getElementById('carouselInner');
             carouselInner.innerHTML = '';
             
@@ -456,7 +574,7 @@
         }
 
         // Update carousel management list
-        function updateCarouselManagement(data) {
+    function updateCarouselManagement(data) {
             const managementList = document.getElementById('carouselManagementList');
             managementList.innerHTML = '';
             
@@ -484,6 +602,9 @@
                         <div class="text-muted small"><i class="fas fa-sort-numeric-up me-1"></i>Order: ${item.displayOrder}</div>
                     </div>
                     <div class="ms-auto">
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editCarouselImage(${item.id})" title="Edit this image">
+                            <i class="fas fa-edit"></i>
+                        </button>
                         <button class="btn btn-sm btn-outline-danger" onclick="deleteCarouselImage(${item.id})" title="Delete this image">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -499,14 +620,14 @@
         }
 
         // Update delete button state based on selections
-        function updateDeleteButtonState() {
+    function updateDeleteButtonState() {
             const selectedCheckboxes = document.querySelectorAll('.carousel-checkbox:checked');
             const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
             deleteSelectedBtn.disabled = selectedCheckboxes.length === 0;
         }
 
         // Select all carousel images
-        function selectAllCarouselImages() {
+    function selectAllCarouselImages() {
             const checkboxes = document.querySelectorAll('.carousel-checkbox');
             const selectAllBtn = document.getElementById('selectAllBtn');
             const allChecked = Array.from(checkboxes).every(cb => cb.checked);
@@ -520,7 +641,7 @@
         }
 
         // Delete selected carousel images
-        async function deleteSelectedCarouselImages() {
+    async function deleteSelectedCarouselImages() {
             const selectedCheckboxes = document.querySelectorAll('.carousel-checkbox:checked');
             const selectedIds = Array.from(selectedCheckboxes).map(cb => parseInt(cb.value));
             
@@ -548,7 +669,7 @@
                 
                 if (failedDeletes.length === 0) {
                     alert('Selected carousel images deleted successfully!');
-                    loadCarouselData();
+                    loadCarouselImages();
                 } else {
                     alert(`Failed to delete ${failedDeletes.length} image(s).`);
                 }
@@ -558,58 +679,82 @@
             }
         }
 
-        // Delete individual carousel image
-        async function deleteCarouselImage(id) {
-            if (!confirm('Are you sure you want to delete this carousel image?')) {
-                return;
-            }
-            
-            try {
-                const response = await fetch(`/api/carousel/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`
-                    }
-                });
-                
-                if (response.ok) {
-                    alert('Carousel image deleted successfully!');
-                    loadCarouselData();
-                } else {
-                    alert('Failed to delete carousel image.');
-                }
-            } catch (error) {
-                console.error('Error deleting carousel image:', error);
-                alert('Error deleting carousel image.');
-            }
-        }
-
-        // Add carousel image with file upload
+        // Add/Edit carousel image with file upload
         document.getElementById('carouselForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            console.log('Carousel form submitted');
             
+            const editingId = document.getElementById('editingCarouselId').value;
             const file = document.getElementById('carouselImageFile').files[0];
             const title = document.getElementById('carouselTitle').value.trim();
-            const description = document.getElementById('carouselDescription').value.trim();
+            const displayOrder = parseInt(document.getElementById('carouselDisplayOrder').value) || 1;
 
-            if (!file) {
-                alert('Please select an image file.');
+            console.log('Form data:', { editingId, file: file?.name, title, displayOrder });
+
+            // Check if we're editing and have an ID
+            if (editingId && !file) {
+                console.log('Editing mode - no new file selected');
+                // Editing mode - no new file selected, keep existing image
+                try {
+                    const carouselResponse = await fetch(`/api/carousel/${editingId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify({
+                            title: title || 'Untitled',
+                            displayOrder: displayOrder
+                        })
+                    });
+
+                    if (carouselResponse.ok) {
+                        alert('Carousel image updated successfully!');
+                        cancelCarouselEdit();
+                        loadCarouselImages();
+                    } else {
+                        alert('Failed to update carousel image.');
+                    }
+                    return;
+                } catch (error) {
+                    console.error('Error updating carousel:', error);
+                    alert('Error updating carousel image.');
+                    return;
+                }
+            }
+
+            // Adding new image or editing with new file
+            // No file validation - allow empty file for editing mode
+
+            // If no file is selected and we're not editing, skip upload
+            if (!file && !editingId) {
+                console.log('No file selected and not editing - skipping upload');
                 return;
             }
 
+            console.log('Starting image upload process');
             try {
-                // First upload the image
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('imageType', 'carousel');
-                // Only append title and description if they have values
-                if (title) {
-                    formData.append('title', title);
-                }
-                if (description) {
-                    formData.append('description', description);
-                }
+                // First upload the image (if file exists)
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('imageType', 'carousel');
+                    // Only append title if it has a value
+                    if (title) {
+                        formData.append('title', title);
+                    }
 
+                console.log('FormData created:', {
+                    file: file.name,
+                    fileSize: file.size,
+                    fileType: file.type,
+                    imageType: 'carousel',
+                    title: title || 'undefined'
+                });
+
+                console.log('Auth token available:', !!authToken);
+                console.log('Uploading image to /api/image/upload');
+                
                 const uploadResponse = await fetch('/api/image/upload', {
                     method: 'POST',
                     headers: {
@@ -618,44 +763,94 @@
                     body: formData
                 });
 
+                console.log('Upload response status:', uploadResponse.status);
+                console.log('Upload response headers:', Object.fromEntries(uploadResponse.headers.entries()));
+                
                 if (uploadResponse.ok) {
                     const uploadResult = await uploadResponse.json();
+                    console.log('Upload successful, result:', uploadResult);
                     
-                    // Then create carousel entry
-                    const carouselResponse = await fetch('/api/carousel', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${authToken}`
-                        },
-                        body: JSON.stringify({
-                            title: title || 'Untitled', // Provide default title if empty
-                            description: description || null, // Allow null description
-                            imageUploadId: uploadResult.id,
-                            displayOrder: 0
-                        })
-                    });
-
-                    if (carouselResponse.ok) {
-                        alert('Carousel image added successfully!');
-                        this.reset();
-                        loadCarouselData();
-                    } else {
-                        alert('Failed to add carousel image.');
-                    }
+                    // Create or update carousel entry with new image
+                    await createOrUpdateCarouselEntry(title, displayOrder, uploadResult.id, editingId);
                 } else {
                     const errorText = await uploadResponse.text();
-                    console.error('Image upload failed:', errorText);
+                    console.error('Image upload failed. Status:', uploadResponse.status);
+                    console.error('Error response text:', errorText);
+                    console.error('Response headers:', Object.fromEntries(uploadResponse.headers.entries()));
                     alert('Failed to upload image. Please try again.');
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error adding carousel image.');
+            } else {
+                // No file uploaded, just update carousel entry (for editing mode)
+                if (editingId) {
+                    console.log('No file uploaded, updating carousel entry only');
+                    await createOrUpdateCarouselEntry(title, displayOrder, null, editingId);
+                } else {
+                    alert('Please select an image file for new carousel entries.');
+                }
             }
-        });
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error adding carousel image.');
+        }
+    });
 
-        // Load logo data
-        function loadLogoData() {
+
+    // Helper function to create or update carousel entry
+    async function createOrUpdateCarouselEntry(title, displayOrder, imageUploadId, editingId) {
+        try {
+            if (editingId) {
+                console.log('Updating existing carousel entry');
+                const carouselResponse = await fetch(`/api/carousel/${editingId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        title: title || 'Untitled',
+                        displayOrder: displayOrder,
+                        ...(imageUploadId && { imageUploadId: imageUploadId })
+                    })
+                });
+
+                if (carouselResponse.ok) {
+                    alert('Carousel image updated successfully!');
+                    cancelCarouselEdit();
+                    loadCarouselImages();
+                } else {
+                    alert('Failed to update carousel image.');
+                }
+            } else {
+                console.log('Creating new carousel entry');
+                const carouselResponse = await fetch('/api/carousel', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        title: title || 'Untitled',
+                        displayOrder: displayOrder,
+                        imageUploadId: imageUploadId
+                    })
+                });
+
+                if (carouselResponse.ok) {
+                    alert('Carousel image added successfully!');
+                    document.getElementById('carouselForm').reset();
+                    loadCarouselImages();
+                } else {
+                    alert('Failed to add carousel image.');
+                }
+            }
+        } catch (error) {
+            console.error('Error creating/updating carousel entry:', error);
+            alert('Error updating carousel entry.');
+        }
+    }
+
+    // Load logo data
+    function loadLogoData() {
             const logoImg = document.getElementById('currentLogo');
             const logoText = logoImg.nextElementSibling;
             
@@ -681,8 +876,8 @@
             };
         }
 
-        // Update logo with file upload
-        document.getElementById('logoForm').addEventListener('submit', async function(e) {
+    // Update logo with file upload
+    document.getElementById('logoForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const file = document.getElementById('logoFile').files[0];
@@ -719,8 +914,8 @@
             }
         });
 
-        // Load offers data from database
-        async function loadOffersData() {
+    // Load offers data from database
+    async function loadOffersData() {
             try {
                 const response = await fetch('/api/offers');
                 if (response.ok) {
@@ -756,8 +951,8 @@
             }
         }
 
-        // Add/Edit offer with file upload
-        document.getElementById('offerForm').addEventListener('submit', async function(e) {
+    // Add/Edit offer with file upload
+    document.getElementById('offerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const editingOfferId = document.getElementById('editingOfferId').value;
@@ -840,7 +1035,7 @@
         });
 
         // Refresh logo function
-        function refreshLogo() {
+    function refreshLogo() {
             const logoImg = document.getElementById('currentLogo');
             if (logoImg) {
                 logoImg.src = '/api/image/logo?' + new Date().getTime();
@@ -863,7 +1058,7 @@
         });
 
         // Load contact inquiries data
-        async function loadContactsData() {
+    async function loadContactsData() {
             try {
                 const response = await fetch('/api/contact/inquiries', {
                     headers: {
@@ -883,7 +1078,7 @@
         }
 
         // Update contacts list
-        function updateContactsList(contacts) {
+    function updateContactsList(contacts) {
             const contactsList = document.getElementById('contactsList');
             
             if (contacts.length === 0) {
@@ -929,7 +1124,7 @@
         }
 
         // Mark inquiry as read
-        async function markAsRead(id) {
+    async function markAsRead(id) {
             try {
                 const response = await fetch(`/api/contact/inquiries/${id}/mark-read`, {
                     method: 'PUT',
@@ -950,7 +1145,7 @@
         }
 
         // Delete inquiry
-        async function deleteInquiry(id) {
+    async function deleteInquiry(id) {
             if (!confirm('Are you sure you want to delete this inquiry?')) {
                 return;
             }
@@ -1058,7 +1253,7 @@
         });
 
         // Edit offer function
-        function editOffer(id, title, description, discountPercentage, validUntil) {
+    function editOffer(id, title, description, discountPercentage, validUntil) {
             document.getElementById('editingOfferId').value = id;
             document.getElementById('offerTitle').value = title;
             document.getElementById('offerDescription').value = description;
@@ -1073,7 +1268,7 @@
         }
 
         // Cancel edit offer function
-        function cancelEditOffer() {
+    function cancelEditOffer() {
             document.getElementById('editingOfferId').value = '';
             document.getElementById('offerForm').reset();
             document.getElementById('offerSubmitBtn').textContent = 'Add Offer';
@@ -1103,6 +1298,356 @@
             } catch (error) {
                 console.error('Error deleting offer:', error);
                 alert('Error deleting offer.');
+            }
+        }
+
+        // Load contact info data
+        async function loadContactInfoData() {
+            try {
+                const response = await fetch('/api/contactinfo');
+                if (response.ok) {
+                    const data = await response.json();
+                    populateContactInfoForm(data);
+                } else {
+                    console.error('Failed to load contact info');
+                }
+            } catch (error) {
+                console.error('Error loading contact info:', error);
+            }
+        }
+
+        // Populate contact info form
+    function populateContactInfoForm(data) {
+            document.getElementById('companyName').value = data.companyName || '';
+            document.getElementById('address').value = data.address || '';
+            document.getElementById('city').value = data.city || '';
+            document.getElementById('state').value = data.state || '';
+            document.getElementById('postalCode').value = data.postalCode || '';
+            document.getElementById('country').value = data.country || '';
+            document.getElementById('phone').value = data.phone || '';
+            document.getElementById('mobile').value = data.mobile || '';
+            document.getElementById('email').value = data.email || '';
+            document.getElementById('website').value = data.website || '';
+            document.getElementById('workingHours').value = data.workingHours || '';
+            document.getElementById('description').value = data.description || '';
+        }
+
+        // Save contact info
+        document.getElementById('contactInfoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                companyName: document.getElementById('companyName').value,
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value,
+                postalCode: document.getElementById('postalCode').value,
+                country: document.getElementById('country').value,
+                phone: document.getElementById('phone').value,
+                mobile: document.getElementById('mobile').value,
+                email: document.getElementById('email').value,
+                website: document.getElementById('website').value,
+                workingHours: document.getElementById('workingHours').value,
+                description: document.getElementById('description').value
+            };
+
+            try {
+                const response = await fetch('/api/contactinfo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    alert('Contact information saved successfully!');
+                    loadContactInfoData(); // Reload the data
+                } else {
+                    alert('Failed to save contact information.');
+                }
+            } catch (error) {
+                console.error('Error saving contact info:', error);
+                alert('Error saving contact information.');
+            }
+        });
+
+
+
+        // Carousel Management Functions
+        async function loadCarouselImages() {
+            try {
+                const response = await fetch('/api/carousel', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const images = await response.json();
+                    displayCarouselImages(images);
+                } else {
+                    console.error('Failed to load carousel images');
+                }
+            } catch (error) {
+                console.error('Error loading carousel images:', error);
+            }
+        }
+
+    function displayCarouselImages(images) {
+            const container = document.getElementById('carouselImagesList');
+            if (!container) return;
+
+            if (images.length === 0) {
+                container.innerHTML = '<div class="text-muted text-center py-3">No carousel images found. Upload some images to get started!</div>';
+                return;
+            }
+
+            container.innerHTML = images.map(item => `
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <img src="/api/image/${item.imageUploadId}" alt="${item.title}" class="me-3" style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px;">
+                        <div>
+                            <h6 class="mb-1">${item.title || 'Untitled'}</h6>
+                            <small class="text-muted">Order: ${item.displayOrder} | Created: ${new Date(item.createdAt).toLocaleDateString()}</small>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editCarouselImage(${item.id})" title="Edit this image">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteCarouselImage(${item.id})" title="Delete this image">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Multiple File Upload Functions
+    function previewBulkUpload() {
+            const fileInput = document.getElementById('bulkCarouselFiles');
+            const prefix = document.getElementById('bulkCarouselPrefix').value || 'Image';
+            const startOrder = parseInt(document.getElementById('bulkCarouselStartOrder').value) || 1;
+            
+            // No validation - allow empty file selection
+            if (!fileInput.files || fileInput.files.length === 0) {
+                console.log('No files selected for bulk upload preview');
+                return;
+            }
+
+            const previewSection = document.getElementById('bulkPreviewSection');
+            const previewList = document.getElementById('bulkPreviewList');
+            
+            previewList.innerHTML = '';
+            
+            Array.from(fileInput.files).forEach((file, index) => {
+                const title = `${prefix} ${startOrder + index}`;
+                const displayOrder = startOrder + index;
+                
+                const previewItem = document.createElement('div');
+                previewItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                previewItem.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <img src="${URL.createObjectURL(file)}" alt="${title}" class="me-3" style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px;">
+                        <div>
+                            <h6 class="mb-1">${title}</h6>
+                            <small class="text-muted">Order: ${displayOrder} | File: ${file.name}</small>
+                        </div>
+                    </div>
+                    <span class="badge bg-primary">${(file.size / 1024).toFixed(1)} KB</span>
+                `;
+                previewList.appendChild(previewItem);
+            });
+            
+            previewSection.style.display = 'block';
+        }
+
+    async function processBulkUpload() {
+            const fileInput = document.getElementById('bulkCarouselFiles');
+            const prefix = document.getElementById('bulkCarouselPrefix').value || 'Image';
+            const startOrder = parseInt(document.getElementById('bulkCarouselStartOrder').value) || 1;
+            
+            // No validation - allow empty file selection
+            if (!fileInput.files || fileInput.files.length === 0) {
+                console.log('No files selected for bulk upload');
+                return;
+            }
+
+            const files = Array.from(fileInput.files);
+            const submitBtn = document.getElementById('bulkCarouselSubmitBtn');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
+            
+            let successCount = 0;
+            let errorCount = 0;
+            
+            try {
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const title = `${prefix} ${startOrder + i}`;
+                    const displayOrder = startOrder + i;
+                    
+                    console.log(`Processing file ${i + 1}/${files.length}: ${file.name}`);
+                    
+                    // Upload image
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('imageType', 'carousel');
+                    formData.append('title', title);
+                    
+                    const uploadResponse = await fetch('/api/image/upload', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: formData
+                    });
+                    
+                    if (uploadResponse.ok) {
+                        const uploadResult = await uploadResponse.json();
+                        
+                        // Create carousel entry
+                        const carouselData = {
+                            title: title,
+                            displayOrder: displayOrder,
+                            imageUploadId: uploadResult.id
+                        };
+                        
+                        const carouselResponse = await fetch('/api/carousel', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${authToken}`
+                            },
+                            body: JSON.stringify(carouselData)
+                        });
+                        
+                        if (carouselResponse.ok) {
+                            successCount++;
+                            console.log(`Successfully uploaded: ${file.name}`);
+                        } else {
+                            errorCount++;
+                            console.error(`Failed to create carousel entry for: ${file.name}`);
+                        }
+                    } else {
+                        errorCount++;
+                        console.error(`Failed to upload image: ${file.name}`);
+                    }
+                    
+                    // Update progress
+                    submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>Uploading... (${i + 1}/${files.length})`;
+                }
+                
+                // Show results
+                if (errorCount === 0) {
+                    alert(`✅ Successfully uploaded all ${successCount} images!`);
+                } else {
+                    alert(`⚠️ Upload completed with ${successCount} successes and ${errorCount} errors. Check console for details.`);
+                }
+                
+                // Reset form and refresh
+                document.getElementById('bulkCarouselForm').reset();
+                document.getElementById('bulkPreviewSection').style.display = 'none';
+                loadCarouselImages();
+                
+            } catch (error) {
+                console.error('Bulk upload error:', error);
+                alert('An error occurred during bulk upload. Check console for details.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        }
+
+    // Add event listener for bulk upload form
+    document.addEventListener('DOMContentLoaded', function() {
+            const bulkForm = document.getElementById('bulkCarouselForm');
+            if (bulkForm) {
+                bulkForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    processBulkUpload();
+                });
+            }
+        });
+
+    // Carousel Edit Functions
+    async function editCarouselImage(id) {
+            try {
+                const response = await fetch(`/api/carousel/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    populateCarouselForm(data);
+                    setCarouselEditMode(true, id);
+                } else {
+                    alert('Failed to load image data for editing');
+                }
+            } catch (error) {
+                console.error('Error loading image for edit:', error);
+                alert('Error loading image data');
+            }
+        }
+
+    function populateCarouselForm(data) {
+            document.getElementById('carouselTitle').value = data.title || '';
+            document.getElementById('carouselDisplayOrder').value = data.displayOrder || 1;
+            document.getElementById('editingCarouselId').value = data.id;
+        }
+
+    function setCarouselEditMode(isEditing, id) {
+            const submitBtn = document.getElementById('carouselSubmitBtn');
+            const cancelBtn = document.getElementById('cancelCarouselEditBtn');
+            const formTitle = document.querySelector('#carouselSection h3');
+            
+            if (isEditing) {
+                submitBtn.textContent = 'Update Carousel Image';
+                submitBtn.className = 'btn btn-warning';
+                cancelBtn.style.display = 'inline-block';
+                if (formTitle) formTitle.textContent = 'Edit Carousel Image';
+            } else {
+                submitBtn.textContent = 'Add to Carousel';
+                submitBtn.className = 'btn btn-primary';
+                cancelBtn.style.display = 'none';
+                if (formTitle) formTitle.textContent = 'Carousel Image Management';
+            }
+        }
+
+    function cancelCarouselEdit() {
+            document.getElementById('carouselForm').reset();
+            document.getElementById('editingCarouselId').value = '';
+            setCarouselEditMode(false);
+        }
+
+    async function deleteCarouselImage(id) {
+            if (!confirm('Are you sure you want to delete this carousel image? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/carousel/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    alert('Carousel image deleted successfully!');
+                    loadCarouselImages();
+                } else {
+                    alert('Failed to delete carousel image');
+                }
+            } catch (error) {
+                console.error('Error deleting carousel image:', error);
+                alert('Error deleting image');
             }
         }
     </script>

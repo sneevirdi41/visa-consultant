@@ -17,6 +17,7 @@ namespace visa_consulatant.Data
         public DbSet<ImageUpload> ImageUploads { get; set; } = null!;
         public DbSet<CarouselImage> CarouselImages { get; set; } = null!;
         public DbSet<Offer> Offers { get; set; } = null!;
+        public DbSet<ContactInfo> ContactInfos { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -159,6 +160,26 @@ namespace visa_consulatant.Data
                     CreatedBy = "System"
                 }
             );
+
+            // Seed default contact information
+            modelBuilder.Entity<ContactInfo>().HasData(new ContactInfo
+            {
+                Id = 1,
+                CompanyName = "Guru Kirpa Immigration Services",
+                Address = "123 Immigration Street",
+                City = "Melbourne",
+                State = "Victoria",
+                PostalCode = "3000",
+                Country = "Australia",
+                Phone = "+61 3 1234 5678",
+                Mobile = "+61 400 123 456",
+                Email = "info@gurukirpa.com",
+                Website = "www.gurukirpa.com",
+                WorkingHours = "Monday - Friday: 9:00 AM - 6:00 PM",
+                Description = "Your trusted partner for all Australian immigration services. We provide expert guidance and support for your visa applications to Australia.",
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            });
         }
     }
 } 

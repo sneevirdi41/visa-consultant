@@ -18,7 +18,20 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
+            overflow-x: hidden;
         }
+
+        /* Mobile-first responsive design */
+        .container {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        /* Responsive typography */
+        h1, .h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+        h2, .h2 { font-size: clamp(1.5rem, 4vw, 2.5rem); }
+        h3, .h3 { font-size: clamp(1.25rem, 3.5vw, 2rem); }
+        p { font-size: clamp(1rem, 2.5vw, 1.1rem); }
 
         .navbar {
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-blue) 100%) !important;
@@ -29,7 +42,7 @@
             display: flex;
             align-items: center;
             font-weight: bold;
-            font-size: 1.8rem;
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
             color: white !important;
         }
 
@@ -63,19 +76,19 @@
         }
 
         .logo-main {
-            font-size: 1.5rem;
+            font-size: clamp(1rem, 3.5vw, 1.5rem);
             font-weight: bold;
         }
 
         .logo-subtitle {
-            font-size: 0.9rem;
+            font-size: clamp(0.7rem, 2.5vw, 0.9rem);
             opacity: 0.9;
         }
 
         .hero-section {
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             color: white;
-            padding: 120px 0 100px 0;
+            padding: clamp(60px, 15vw, 120px) 0 clamp(50px, 12vw, 100px) 0;
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -98,9 +111,9 @@
         }
 
         .hero-section h1 {
-            font-size: 3.5rem;
+            font-size: clamp(2rem, 8vw, 3.5rem);
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: clamp(15px, 3vw, 20px);
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             animation: fadeInUp 1s ease-out;
         }
@@ -117,8 +130,8 @@
         }
 
         .hero-section p {
-            font-size: 1.3rem;
-            margin-bottom: 30px;
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            margin-bottom: clamp(20px, 4vw, 30px);
             opacity: 0.95;
         }
 
@@ -134,7 +147,7 @@
 
         .carousel-item img {
             width: 100%;
-            height: 400px;
+            height: clamp(250px, 60vw, 400px);
             object-fit: cover;
         }
 
@@ -303,6 +316,367 @@
             color: var(--primary-color);
             font-weight: bold;
             margin-bottom: 1rem;
+        }
+
+        /* ===== MOBILE RESPONSIVENESS ===== */
+        
+        /* Mobile-first responsive breakpoints */
+        @media (max-width: 768px) {
+            /* Logo mobile adjustments */
+            .logo-image {
+                height: 70px;
+                width: 70px;
+                padding: 8px;
+            }
+            
+            .hero-logo img {
+                height: 120px;
+                width: 120px;
+                padding: 12px;
+            }
+            
+            /* Navbar mobile adjustments */
+            .navbar-nav {
+                text-align: center;
+                margin-top: 1rem;
+            }
+            
+            .navbar-nav .nav-link {
+                padding: 12px 20px !important;
+                margin: 5px 0;
+                border-radius: 25px;
+                background: rgba(255, 255, 255, 0.1);
+                transition: all 0.3s ease;
+            }
+            
+            .navbar-nav .nav-link:hover {
+                background: rgba(255, 255, 255, 0.2);
+                transform: translateY(-2px);
+            }
+            
+            /* Logo container mobile adjustments */
+            .logo-container {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            
+            .logo-text {
+                text-align: center;
+            }
+            
+            /* Hero section mobile adjustments */
+            .hero-section {
+                padding: 40px 20px;
+            }
+            
+            .hero-section h1 {
+                margin-bottom: 15px;
+                line-height: 1.2;
+            }
+            
+            .hero-section p {
+                padding: 0 10px;
+                line-height: 1.5;
+            }
+            
+            /* Service cards mobile adjustments */
+            .service-card {
+                margin-bottom: 20px;
+                border-radius: 15px;
+            }
+            
+            .service-card .card-body {
+                padding: 1.5rem;
+            }
+            
+            .service-icon {
+                font-size: 2.5rem;
+                margin-bottom: 0.8rem;
+            }
+            
+            /* Contact form mobile adjustments */
+            .contact-form {
+                padding: 1.5rem;
+                margin: 0 15px;
+            }
+            
+            .contact-section {
+                padding: 40px 0;
+            }
+            
+            /* Stats section mobile adjustments */
+            .stats-section {
+                padding: 40px 0;
+            }
+            
+            .stat-item {
+                margin-bottom: 20px;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+            
+            .stat-label {
+                font-size: 1rem;
+            }
+            
+            /* About section mobile adjustments */
+            .about-section {
+                padding: 40px 0;
+            }
+            
+            /* Footer mobile adjustments */
+            .footer {
+                padding: 30px 0;
+                text-align: center;
+            }
+            
+            .footer .row > div {
+                margin-bottom: 20px;
+            }
+        }
+        
+        /* Small mobile devices */
+        @media (max-width: 576px) {
+            /* Logo small mobile adjustments */
+            .logo-image {
+                height: 60px;
+                width: 60px;
+                padding: 6px;
+            }
+            
+            .hero-logo img {
+                height: 100px;
+                width: 100px;
+                padding: 10px;
+            }
+            
+            .container {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            
+            .hero-section {
+                padding: 30px 15px;
+            }
+            
+            .hero-section h1 {
+                font-size: 1.8rem;
+                line-height: 1.1;
+            }
+            
+            .hero-section p {
+                font-size: 0.95rem;
+                padding: 0 5px;
+            }
+            
+            .service-card .card-body {
+                padding: 1rem;
+            }
+            
+            .contact-form {
+                padding: 1rem;
+                margin: 0 10px;
+            }
+            
+            .btn-primary {
+                padding: 12px 25px;
+                font-size: 0.9rem;
+                width: 100%;
+                margin-top: 10px;
+            }
+            
+            .carousel-caption {
+                padding: 15px;
+                bottom: 10px;
+            }
+            
+            .carousel-caption h5 {
+                font-size: 1.2rem;
+            }
+            
+            .carousel-caption p {
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Extra small mobile devices */
+        @media (max-width: 375px) {
+            .hero-section {
+                padding: 25px 10px;
+            }
+            
+            .hero-section h1 {
+                font-size: 1.6rem;
+            }
+            
+            .logo-image {
+                height: 50px;
+                width: 50px;
+                padding: 5px;
+            }
+            
+            .hero-logo img {
+                height: 80px;
+                width: 80px;
+                padding: 8px;
+            }
+            
+            .service-card .card-body {
+                padding: 0.8rem;
+            }
+            
+            .contact-form {
+                padding: 0.8rem;
+                margin: 0 5px;
+            }
+        }
+        
+        /* Tablet devices */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .hero-section {
+                padding: 80px 0 60px 0;
+            }
+            
+            .hero-section h1 {
+                font-size: 3rem;
+            }
+            
+            .service-card .card-body {
+                padding: 1.8rem;
+            }
+            
+            .contact-form {
+                padding: 2rem;
+            }
+        }
+        
+        /* Landscape mobile orientation */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .hero-section {
+                padding: 30px 0;
+            }
+            
+            .hero-section h1 {
+                font-size: 2rem;
+                margin-bottom: 10px;
+            }
+            
+            .hero-section p {
+                margin-bottom: 15px;
+            }
+            
+            .hero-logo img {
+                height: 60px;
+                width: 60px;
+                margin-bottom: 10px;
+            }
+        }
+        
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .service-card:hover {
+                transform: none;
+            }
+            
+            .btn-primary:hover {
+                transform: none;
+            }
+            
+            .logo-image:hover {
+                transform: none;
+            }
+            
+            .hero-logo img:hover {
+                transform: none;
+            }
+            
+            /* Increase touch targets */
+            .navbar-nav .nav-link {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .btn-primary {
+                min-height: 44px;
+            }
+            
+            /* Improve touch scrolling */
+            .carousel {
+                -webkit-overflow-scrolling: touch;
+                scroll-behavior: smooth;
+            }
+            
+            /* Better touch feedback */
+            .service-card:active {
+                transform: scale(0.98);
+                transition: transform 0.1s ease;
+            }
+            
+            .btn-primary:active {
+                transform: scale(0.95);
+                transition: transform 0.1s ease;
+            }
+        }
+        
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .logo-image,
+            .hero-logo img {
+                image-rendering: -webkit-optimize-contrast;
+                image-rendering: crisp-edges;
+            }
+        }
+        
+        /* Mobile navigation improvements */
+        .navbar-toggler {
+            border: none;
+            padding: 0.5rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-toggler:focus {
+            box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+            outline: none;
+        }
+        
+        .navbar-toggler:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Mobile form improvements */
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+        }
+        
+        /* Mobile button improvements */
+        .btn {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Mobile image optimizations */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* Mobile spacing improvements */
+        .row {
+            margin-left: -10px;
+            margin-right: -10px;
+        }
+        
+        .col, .col-md-6, .col-lg-4 {
+            padding-left: 10px;
+            padding-right: 10px;
         }
 
         .feature-icon {
@@ -545,6 +919,46 @@
                     <p class="lead">Get in touch with us for expert immigration consultation</p>
                 </div>
             </div>
+            <div class="row mb-5">
+                <div class="col-lg-8 mx-auto">
+                    <div class="contact-info text-center">
+                        <div class="row">
+                            <div class="col-md-4 mb-4">
+                                <div class="contact-item">
+                                    <i class="fas fa-map-marker-alt fa-2x text-primary mb-3"></i>
+                                    <h5>Address</h5>
+                                    <p id="contactAddress">Loading...</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="contact-item">
+                                    <i class="fas fa-phone fa-2x text-primary mb-3"></i>
+                                    <h5>Phone</h5>
+                                    <p id="contactPhone">Loading...</p>
+                                    <p id="contactMobile" class="text-muted">Loading...</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="contact-item">
+                                    <i class="fas fa-envelope fa-2x text-primary mb-3"></i>
+                                    <h5>Email</h5>
+                                    <p id="contactEmail">Loading...</p>
+                                    <p id="contactWebsite" class="text-muted">Loading...</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-md-6 mx-auto">
+                                <div class="contact-item">
+                                    <i class="fas fa-clock fa-2x text-primary mb-3"></i>
+                                    <h5>Working Hours</h5>
+                                    <p id="contactWorkingHours">Loading...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-lg-8 mx-auto">
                     <div class="contact-form">
@@ -612,9 +1026,9 @@
                 </div>
                 <div class="col-md-4">
                     <h5>Contact Info</h5>
-                    <p><i class="fas fa-phone me-2"></i> +61 123 456 789</p>
-                    <p><i class="fas fa-envelope me-2"></i> info@gurukirpa.com</p>
-                    <p><i class="fas fa-map-marker-alt me-2"></i> Sydney, Australia</p>
+                    <p><i class="fas fa-phone me-2"></i> <span id="footerPhone">Loading...</span></p>
+                    <p><i class="fas fa-envelope me-2"></i> <span id="footerEmail">Loading...</span></p>
+                    <p><i class="fas fa-map-marker-alt me-2"></i> <span id="footerAddress">Loading...</span></p>
                 </div>
             </div>
             <hr class="my-4">
@@ -948,15 +1362,123 @@
             }
         }
 
+        // Load contact information from API
+        async function loadContactInfo() {
+            try {
+                const response = await fetch('/api/contactinfo');
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Update contact section
+                    if (data.address && data.city && data.state && data.country) {
+                        const fullAddress = `${data.address}, ${data.city}, ${data.state} ${data.postalCode}, ${data.country}`;
+                        document.getElementById('contactAddress').textContent = fullAddress;
+                        document.getElementById('footerAddress').textContent = `${data.city}, ${data.country}`;
+                    }
+                    
+                    if (data.phone) {
+                        document.getElementById('contactPhone').textContent = data.phone;
+                        document.getElementById('footerPhone').textContent = data.phone;
+                    }
+                    
+                    if (data.mobile) {
+                        document.getElementById('contactMobile').textContent = data.mobile;
+                    }
+                    
+                    if (data.email) {
+                        document.getElementById('contactEmail').textContent = data.email;
+                        document.getElementById('footerEmail').textContent = data.email;
+                    }
+                    
+                    if (data.website) {
+                        document.getElementById('contactWebsite').textContent = data.website;
+                    }
+                    
+                    if (data.workingHours) {
+                        document.getElementById('contactWorkingHours').textContent = data.workingHours;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading contact info:', error);
+                // Set default values on error
+                document.getElementById('contactAddress').textContent = 'Sydney, Australia';
+                document.getElementById('contactPhone').textContent = '+61 123 456 789';
+                document.getElementById('contactEmail').textContent = 'info@gurukirpa.com';
+                document.getElementById('footerAddress').textContent = 'Sydney, Australia';
+                document.getElementById('footerPhone').textContent = '+61 123 456 789';
+                document.getElementById('footerEmail').textContent = 'info@gurukirpa.com';
+            }
+        }
+
         // Initialize everything when page loads
         document.addEventListener('DOMContentLoaded', function() {
             loadHomepageContent();
             loadServices();
             loadCarouselImages();
             loadOffers();
+            loadContactInfo();
             initializeContactForm();
             initializeSmoothScrolling();
+            initializeMobileOptimizations();
         });
+        
+        // Mobile-specific optimizations
+        function initializeMobileOptimizations() {
+            // Add mobile-specific event listeners
+            if ('ontouchstart' in window) {
+                // Touch device optimizations
+                document.addEventListener('touchstart', function() {}, {passive: true});
+                
+                // Improve mobile scrolling
+                document.body.style.webkitOverflowScrolling = 'touch';
+                
+                // Mobile navigation improvements
+                const navbarToggler = document.querySelector('.navbar-toggler');
+                if (navbarToggler) {
+                    navbarToggler.addEventListener('click', function() {
+                        // Add smooth animation for mobile menu
+                        const navbarCollapse = document.querySelector('.navbar-collapse');
+                        if (navbarCollapse) {
+                            navbarCollapse.style.transition = 'all 0.3s ease';
+                        }
+                    });
+                }
+            }
+            
+            // Responsive image loading
+            const images = document.querySelectorAll('img');
+            images.forEach(img => {
+                // Ensure logos are always visible
+                if (img.classList.contains('logo-image') || img.parentElement.classList.contains('hero-logo')) {
+                    img.style.opacity = '1';
+                } else {
+                    img.addEventListener('load', function() {
+                        this.style.opacity = '1';
+                    });
+                    
+                    // Add loading animation for non-logo images
+                    img.style.opacity = '0';
+                    img.style.transition = 'opacity 0.3s ease';
+                }
+            });
+            
+            // Mobile viewport adjustments
+            function adjustViewport() {
+                const viewport = document.querySelector('meta[name="viewport"]');
+                if (viewport) {
+                    // Prevent zoom on input focus for iOS
+                    viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+                }
+            }
+            
+            // Adjust viewport on orientation change
+            window.addEventListener('orientationchange', function() {
+                setTimeout(adjustViewport, 100);
+            });
+            
+            // Initial viewport adjustment
+            adjustViewport();
+        }
     </script>
 </body>
 </html> 

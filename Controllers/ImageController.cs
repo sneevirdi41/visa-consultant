@@ -22,16 +22,35 @@ namespace visa_consulatant.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<ImageUpload>> UploadImage(IFormFile file, [FromForm] string imageType, [FromForm] string? title, [FromForm] string? description)
         {
+            Console.WriteLine($"=== IMAGE UPLOAD REQUEST RECEIVED ===");
+            Console.WriteLine($"User: {User.Identity?.Name}");
+            Console.WriteLine($"IsAuthenticated: {User.Identity?.IsAuthenticated}");
+            Console.WriteLine($"Roles: {string.Join(", ", User.Claims.Where(c => c.Type == "role").Select(c => c.Value))}");
+            Console.WriteLine($"File: {file?.FileName}, Size: {file?.Length}, Type: {file?.ContentType}");
+            Console.WriteLine($"ImageType: {imageType}, Title: {title}, Description: {description}");
+            Console.WriteLine($"Headers: {string.Join(", ", Request.Headers.Select(h => $"{h.Key}={h.Value}"))}");
+            
             if (file == null || file.Length == 0)
+            {
+                Console.WriteLine("ERROR: No file uploaded");
                 return BadRequest("No file uploaded");
+            }
 
             if (file.Length > 10 * 1024 * 1024) // 10MB limit
+            {
+                Console.WriteLine($"ERROR: File too large - {file.Length} bytes");
                 return BadRequest("File size too large. Maximum size is 10MB");
+            }
 
             var allowedTypes = new[] { "image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp" };
             if (!allowedTypes.Contains(file.ContentType.ToLower()))
+            {
+                Console.WriteLine($"ERROR: Invalid file type - {file.ContentType}");
                 return BadRequest("Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed");
+            }
 
+            Console.WriteLine("File validation passed, processing upload...");
+            
             using var memoryStream = new MemoryStream();
             await file.CopyToAsync(memoryStream);
             var imageData = memoryStream.ToArray();
@@ -49,8 +68,10 @@ namespace visa_consulatant.Controllers
                 IsActive = true
             };
 
+            Console.WriteLine($"Saving image to database: {imageUpload.FileName}");
             _context.ImageUploads.Add(imageUpload);
             await _context.SaveChangesAsync();
+            Console.WriteLine($"Image saved successfully with ID: {imageUpload.Id}");
 
             return Ok(new { 
                 id = imageUpload.Id, 

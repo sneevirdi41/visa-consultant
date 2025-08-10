@@ -3,7 +3,6 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using visa_consulatant.Data;
 
 #nullable disable
@@ -16,44 +15,38 @@ namespace visa_consulatant.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
-
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
 
             modelBuilder.Entity("visa_consulatant.Models.CarouselImage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("ImageUploadId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -62,49 +55,147 @@ namespace visa_consulatant.Migrations
                     b.ToTable("CarouselImages");
                 });
 
-            modelBuilder.Entity("visa_consulatant.Models.ContactInquiry", b =>
+            modelBuilder.Entity("visa_consulatant.Models.ContactInfo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("boolean");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("Message")
+                    b.Property<string>("Mobile")
                         .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Website")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("WorkingHours")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ContactInfos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Address = "123 Immigration Street",
+                            City = "Melbourne",
+                            CompanyName = "Guru Kirpa Immigration Services",
+                            Country = "Australia",
+                            CreatedAt = new DateTime(2025, 8, 10, 11, 35, 57, 934, DateTimeKind.Utc).AddTicks(4949),
+                            Description = "Your trusted partner for all Australian immigration services. We provide expert guidance and support for your visa applications to Australia.",
+                            Email = "info@gurukirpa.com",
+                            IsActive = true,
+                            Mobile = "+61 400 123 456",
+                            Phone = "+61 3 1234 5678",
+                            PostalCode = "3000",
+                            State = "Victoria",
+                            Website = "www.gurukirpa.com",
+                            WorkingHours = "Monday - Friday: 9:00 AM - 6:00 PM"
+                        });
+                });
+
+            modelBuilder.Entity("visa_consulatant.Models.ContactInquiry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("ReadAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Subject")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("VisaType")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -115,43 +206,41 @@ namespace visa_consulatant.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("BannerImageUrl")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("HeroImageUrl")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("LastUpdated")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("LogoUrl")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ServicesOverview")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("WelcomeMessage")
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -162,7 +251,7 @@ namespace visa_consulatant.Migrations
                         {
                             Id = 1,
                             Description = "Your trusted partner for all Australian immigration services. We provide expert guidance and support for your visa applications to Australia.",
-                            LastUpdated = new DateTime(2025, 8, 3, 12, 33, 41, 22, DateTimeKind.Utc).AddTicks(2375),
+                            LastUpdated = new DateTime(2025, 8, 10, 11, 35, 57, 933, DateTimeKind.Utc).AddTicks(3289),
                             ServicesOverview = "We offer comprehensive Australian immigration services including skilled migration, student visas, partner visas, tourist visas, and permanent residency applications.",
                             Title = "Guru Kirpa Immigration - Your Gateway to Australia",
                             UpdatedBy = "System",
@@ -174,44 +263,42 @@ namespace visa_consulatant.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ContentType")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("TEXT");
 
                     b.Property<byte[]>("ImageData")
                         .IsRequired()
-                        .HasColumnType("bytea");
+                        .HasColumnType("BLOB");
 
                     b.Property<string>("ImageType")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Title")
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UploadedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("UploadedBy")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -222,40 +309,38 @@ namespace visa_consulatant.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<decimal?>("DiscountPercentage")
                         .HasColumnType("decimal(5,2)");
 
                     b.Property<int?>("ImageUploadId")
-                        .HasColumnType("integer");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("ValidFrom")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("ValidUntil")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -267,26 +352,26 @@ namespace visa_consulatant.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 8, 3, 12, 33, 41, 24, DateTimeKind.Utc).AddTicks(8384),
+                            CreatedAt = new DateTime(2025, 8, 10, 11, 35, 57, 934, DateTimeKind.Utc).AddTicks(107),
                             CreatedBy = "System",
                             Description = "Get 20% off on student visa processing fees. Limited time offer for new students!",
                             DiscountPercentage = 20.00m,
                             IsActive = true,
                             Title = "Student Visa Special Offer",
-                            ValidFrom = new DateTime(2025, 8, 3, 12, 33, 41, 24, DateTimeKind.Utc).AddTicks(4601),
-                            ValidUntil = new DateTime(2025, 11, 3, 12, 33, 41, 24, DateTimeKind.Utc).AddTicks(5973)
+                            ValidFrom = new DateTime(2025, 8, 10, 11, 35, 57, 933, DateTimeKind.Utc).AddTicks(9036),
+                            ValidUntil = new DateTime(2025, 11, 10, 11, 35, 57, 933, DateTimeKind.Utc).AddTicks(9418)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 8, 3, 12, 33, 41, 25, DateTimeKind.Utc).AddTicks(554),
+                            CreatedAt = new DateTime(2025, 8, 10, 11, 35, 57, 934, DateTimeKind.Utc).AddTicks(589),
                             CreatedBy = "System",
                             Description = "Complete family immigration package with special rates for families of 3 or more members.",
                             DiscountPercentage = 15.00m,
                             IsActive = true,
                             Title = "Family Package Deal",
-                            ValidFrom = new DateTime(2025, 8, 3, 12, 33, 41, 25, DateTimeKind.Utc).AddTicks(527),
-                            ValidUntil = new DateTime(2026, 2, 3, 12, 33, 41, 25, DateTimeKind.Utc).AddTicks(529)
+                            ValidFrom = new DateTime(2025, 8, 10, 11, 35, 57, 934, DateTimeKind.Utc).AddTicks(580),
+                            ValidUntil = new DateTime(2026, 2, 10, 11, 35, 57, 934, DateTimeKind.Utc).AddTicks(581)
                         });
                 });
 
@@ -294,33 +379,31 @@ namespace visa_consulatant.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -330,10 +413,10 @@ namespace visa_consulatant.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 8, 3, 12, 33, 41, 16, DateTimeKind.Utc).AddTicks(8001),
+                            CreatedAt = new DateTime(2025, 8, 10, 11, 35, 57, 932, DateTimeKind.Utc).AddTicks(759),
                             Email = "admin@gurukirpa.com",
                             IsActive = true,
-                            PasswordHash = "$2a$11$am8zvlm8es8A0tsF70NdPuysIEZ.EDyhqN6i8A3Rl4Pmqu6PqSTmS",
+                            PasswordHash = "$2a$11$bsZg2pzuz5NKNtCHSV7afO3gB1nYBaihzuAUVvf8HUvs7PFNMmPom",
                             Role = "Admin",
                             Username = "admin"
                         });
@@ -343,42 +426,40 @@ namespace visa_consulatant.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Country")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ImageUrl")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("TEXT");
 
                     b.Property<decimal?>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ProcessingTime")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -389,7 +470,7 @@ namespace visa_consulatant.Migrations
                         {
                             Id = 1,
                             Country = "Australia",
-                            CreatedAt = new DateTime(2025, 8, 3, 12, 33, 41, 23, DateTimeKind.Utc).AddTicks(4420),
+                            CreatedAt = new DateTime(2025, 8, 10, 11, 35, 57, 933, DateTimeKind.Utc).AddTicks(6228),
                             Description = "Professional skilled migration services for qualified workers seeking permanent residency in Australia through points-based system.",
                             IsActive = true,
                             Name = "Skilled Migration Visa",
@@ -399,7 +480,7 @@ namespace visa_consulatant.Migrations
                         {
                             Id = 2,
                             Country = "Australia",
-                            CreatedAt = new DateTime(2025, 8, 3, 12, 33, 41, 23, DateTimeKind.Utc).AddTicks(5567),
+                            CreatedAt = new DateTime(2025, 8, 10, 11, 35, 57, 933, DateTimeKind.Utc).AddTicks(6460),
                             Description = "Comprehensive student visa services for international students wishing to study at Australian educational institutions.",
                             IsActive = true,
                             Name = "Student Visa (Subclass 500)",
@@ -409,7 +490,7 @@ namespace visa_consulatant.Migrations
                         {
                             Id = 3,
                             Country = "Australia",
-                            CreatedAt = new DateTime(2025, 8, 3, 12, 33, 41, 23, DateTimeKind.Utc).AddTicks(5572),
+                            CreatedAt = new DateTime(2025, 8, 10, 11, 35, 57, 933, DateTimeKind.Utc).AddTicks(6463),
                             Description = "Expert guidance for partner visa applications including spouse, de facto, and prospective marriage visas.",
                             IsActive = true,
                             Name = "Partner Visa",
@@ -419,7 +500,7 @@ namespace visa_consulatant.Migrations
                         {
                             Id = 4,
                             Country = "Australia",
-                            CreatedAt = new DateTime(2025, 8, 3, 12, 33, 41, 23, DateTimeKind.Utc).AddTicks(5577),
+                            CreatedAt = new DateTime(2025, 8, 10, 11, 35, 57, 933, DateTimeKind.Utc).AddTicks(6466),
                             Description = "Tourist and visitor visa services for short-term stays in Australia for tourism, business, or family visits.",
                             IsActive = true,
                             Name = "Tourist Visa (Subclass 600)",
@@ -429,7 +510,7 @@ namespace visa_consulatant.Migrations
                         {
                             Id = 5,
                             Country = "Australia",
-                            CreatedAt = new DateTime(2025, 8, 3, 12, 33, 41, 23, DateTimeKind.Utc).AddTicks(5582),
+                            CreatedAt = new DateTime(2025, 8, 10, 11, 35, 57, 933, DateTimeKind.Utc).AddTicks(6469),
                             Description = "Temporary skill shortage visa services for skilled workers sponsored by Australian employers.",
                             IsActive = true,
                             Name = "Work Visa (Subclass 482)",
@@ -439,7 +520,7 @@ namespace visa_consulatant.Migrations
                         {
                             Id = 6,
                             Country = "Australia",
-                            CreatedAt = new DateTime(2025, 8, 3, 12, 33, 41, 23, DateTimeKind.Utc).AddTicks(5586),
+                            CreatedAt = new DateTime(2025, 8, 10, 11, 35, 57, 933, DateTimeKind.Utc).AddTicks(6472),
                             Description = "Business and investment visa services for entrepreneurs and investors seeking to establish businesses in Australia.",
                             IsActive = true,
                             Name = "Business Innovation Visa",

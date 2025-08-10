@@ -39,6 +39,27 @@ namespace visa_consulatant.Controllers
             return Ok(carouselImages);
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<object>> GetCarouselImage(int id)
+        {
+            var carouselImage = await _context.CarouselImages
+                .Include(c => c.ImageUpload)
+                .FirstOrDefaultAsync(c => c.Id == id && c.IsActive);
+
+            if (carouselImage == null)
+                return NotFound();
+
+            return Ok(new
+            {
+                id = carouselImage.Id,
+                title = carouselImage.Title,
+                description = carouselImage.Description,
+                imageUrl = $"/api/image/{carouselImage.ImageUploadId}",
+                displayOrder = carouselImage.DisplayOrder,
+                createdAt = carouselImage.CreatedAt
+            });
+        }
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<CarouselImage>> CreateCarouselImage([FromBody] CreateCarouselImageRequest request)
@@ -75,6 +96,16 @@ namespace visa_consulatant.Controllers
             carouselImage.Title = request.Title;
             carouselImage.Description = request.Description;
             carouselImage.DisplayOrder = request.DisplayOrder;
+            
+            // Update image if new one provided
+            if (request.ImageUploadId.HasValue)
+            {
+                var imageUpload = await _context.ImageUploads.FindAsync(request.ImageUploadId.Value);
+                if (imageUpload == null)
+                    return BadRequest("Image not found");
+                    
+                carouselImage.ImageUploadId = request.ImageUploadId.Value;
+            }
 
             await _context.SaveChangesAsync();
 
@@ -109,5 +140,6 @@ namespace visa_consulatant.Controllers
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
         public int DisplayOrder { get; set; } = 0;
+        public int? ImageUploadId { get; set; } // Optional for updating image
     }
 } 

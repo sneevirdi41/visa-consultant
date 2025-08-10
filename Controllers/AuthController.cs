@@ -127,7 +127,7 @@ namespace visa_consulatant.Controllers
         {
             try
             {
-                var jwtSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? "YourSuperSecretJWTKey2024!";
+                var jwtSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? "2pHbAojhgk83cyRlNMCXntL6I05EUzFxOdYTwBVZaG9WSe4uisP7KvJrfqQmD1";
                 var keyLength = jwtSecretKey.Length;
                 var keyBits = keyLength * 8;
                 
@@ -154,7 +154,7 @@ namespace visa_consulatant.Controllers
         {
             try
             {
-                var jwtSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? "YourSuperSecretJWTKey2024!";
+                var jwtSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? "2pHbAojhgk83cyRlNMCXntL6I05EUzFxOdYTwBVZaG9WSe4uisP7KvJrfqQmD1";
                 var testUser = new User
                 {
                     Id = 1,

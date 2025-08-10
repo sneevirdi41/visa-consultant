@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -112,7 +113,8 @@ if (isLocalDevelopmentProvider && (connectionString.Contains("Data Source=") || 
 {
     Console.WriteLine("Configuring SQLite for local development...");
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlite(connectionString));
+        options.UseSqlite(connectionString)
+        .ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning)));
 }
 else
 {
@@ -155,11 +157,12 @@ else
     }
     
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseNpgsql(connectionString));
+        options.UseNpgsql(connectionString)
+        .ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning)));
 }
 
 // Configure JWT Authentication
-var jwtSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? "YourSuperSecretJWTKey2024!";
+var jwtSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? "2pHbAojhgk83cyRlNMCXntL6I05EUzFxOdYTwBVZaG9WSe4uisP7KvJrfqQmD1";
 Console.WriteLine($"JWT Secret Key configured: {!string.IsNullOrEmpty(jwtSecretKey)}");
 
 var key = Encoding.ASCII.GetBytes(jwtSecretKey);
